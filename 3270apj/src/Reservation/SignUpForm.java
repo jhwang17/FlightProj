@@ -1,9 +1,7 @@
 package Reservation;
 
-import Data.CustomerData;
 import Data.Database;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.*;
 import javafx.geometry.*;
 import javafx.scene.Scene;
@@ -14,13 +12,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import javafx.stage.*;
-import Application.Customer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class SignUpForm extends Application {
 
@@ -150,7 +147,6 @@ public class SignUpForm extends Application {
 			public void handle(MouseEvent e) {
 				if (e.getButton() == MouseButton.PRIMARY) {
 					try {
-
 						if (firstNameF.getText().isEmpty() || lastNameF.getText().isEmpty()
 								|| streetF.getText().isEmpty() || cityF.getText().isEmpty()
 								|| stateF.getText().isEmpty() || zipCodeF.getText().isEmpty()
@@ -161,10 +157,18 @@ public class SignUpForm extends Application {
 								showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!",
 									"Please fill in blank!");
 
+						} else if (! isValidEmail(emailF.getText()) ) {
+							showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!",
+									"Invalid Email!");
+							
+						} else if (! isValidSsn(ssnF.getText())) {
+							showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!",
+									"Invalid SSN!");
+							
 						} else {
-							if (checkUsernameExist(userNameF.getText())) {
+							if (checkIfExist(userNameF.getText(), ssnF.getText())) {
 								showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(),
-										"Error: Usernmae Exists", "Please use different username");
+										"Form Error", "Username or SSN exists");
 
 							} else {
 								String s = "INSERT INTO sys.Customer (idCustomer, firstName, lastName, streetAddress, city, state, zipCode, email, ssn, userName, password, securityQuestion, securityAnswer) VALUES (default,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -231,10 +235,10 @@ public class SignUpForm extends Application {
 	}
 
 	// Checks and prevents duplicate username creation
-	public boolean checkUsernameExist(String userName) {
+	public boolean checkIfExist(String userName, String password) {
 		con = Database.ConnectDB();
 		try {
-			String s = "SELECT userName FROM sys.Customer WHERE userName = '" + userName + "'";
+			String s = "SELECT userName FROM sys.Customer WHERE userName= '" + userName + "' OR ssn='" + password + "'";
 			statement = con.createStatement();
 			rs = statement.executeQuery(s);
 			if (rs.next()) {
@@ -246,5 +250,25 @@ public class SignUpForm extends Application {
 			e.printStackTrace();
 			return true;
 		}
+	}
+	
+	public static boolean isValidEmail(String email) { 
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                            "[a-zA-Z0-9_+&*-]+)*@" + 
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                            "A-Z]{2,7}$"; 
+                              
+        Pattern pat = Pattern.compile(emailRegex); 
+        if (email == null) 
+            return false; 
+        return pat.matcher(email).matches(); 
+    } 
+	
+	public static boolean isValidSsn(String ssn) {
+		String ssnRegex = "^\\d{3}[- ]?\\d{2}[- ]?\\d{4}$";
+		Pattern pat = Pattern.compile(ssnRegex);
+		if (ssn == null) 
+			return false;
+		return pat.matcher(ssn).matches();
 	}
 }
