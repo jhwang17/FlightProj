@@ -29,14 +29,14 @@ public class Main extends Application {
 		splashText = new Label("APJ Booking");
 		splashText.setLayoutX(SPLASH_WIDTH);
 		
-		ImageView splashArt = new ImageView("./IMG/Main.png");
-		splashArt.setFitHeight(350);
-		splashArt.setFitWidth(400);
+		ImageView splashArt = new ImageView("./IMG/apj.png");
+		splashArt.setFitWidth(600);
+		splashArt.setFitHeight(500);
 		
 		loadProgress = new ProgressBar();
-		loadProgress.setMaxWidth(400);
+		loadProgress.setMaxWidth(splashArt.getFitWidth());
 		splashLayout = new VBox();
-		splashLayout.getChildren().addAll(splashText, splashArt, loadProgress);
+		splashLayout.getChildren().addAll(splashText, splashArt, loadProgress); 
 		splashLayout.setEffect(new DropShadow());
 	}
 	
@@ -45,8 +45,6 @@ public class Main extends Application {
 		//create the splashStage
 		showSplash(splashStage);
 		
-		splashStage.setWidth(400);
-		splashStage.setHeight(400);
 		//transition from splash stage to login stage after 4 seconds
 		FadeTransition fadeOut = new FadeTransition(Duration.seconds(4), splashLayout);
 		fadeOut.setFromValue(3);
