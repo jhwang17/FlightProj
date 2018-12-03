@@ -1,6 +1,7 @@
 package Reservation;
 
 import java.time.LocalDate;
+
 import Application.Flight;
 import Data.FlightData;
 import javafx.application.Application;
@@ -9,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -16,11 +18,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class FlightView extends Application {
 	public static TableColumn idFlightC;
@@ -194,11 +198,21 @@ public class FlightView extends Application {
 		idFlightD.setPromptText("ID");
 		idFlightD.setMaxWidth(idFlightC.getPrefWidth());
 
-		
 		// Create add button
+//		Button addButton = new Button("Add");
+//		addButton.setOnAction((event) -> {
+//			FlightData.insertFlight();
+//		});
 		Button addButton = new Button("Add");
 		addButton.setOnAction((event) -> {
-			FlightData.insertFlight();
+			if(departDateA.getValue().isAfter(arrivalDateA.getValue())) {
+				GridPane alert = new GridPane();
+				Scene sc = new Scene(alert, 200, 200);
+				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error!",
+						"Set dates are not valid");
+			} else {
+				FlightData.insertFlight();
+			}
 		});
 
 		//create update button
@@ -253,5 +267,14 @@ public class FlightView extends Application {
 		ObservableList<Flight> data = FlightData.getFlight();
 		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, layoverC);
 		table.getItems().addAll(data);
+	}
+	
+	public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+		Alert alert = new Alert(alertType);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.initOwner(owner);
+		alert.show();
 	}
 }
