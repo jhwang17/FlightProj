@@ -38,17 +38,17 @@ public class Flight {
 		//Label idLabel = new Label();
 		//idLabel.setText(this.idFlight.toString());
 		Label departDLabel = new Label();
-		departDLabel.setText("Depart: " + this.departDate.getName());
+		departDLabel.setText("Departure Date: " + this.getDepartDate());
 		Label arrivalDLabel = new Label();
-		arrivalDLabel.setText("Arrive: " + this.arrivalDate.toString());
+		arrivalDLabel.setText("Arrival Date: " + this.getArrivalDate());
 		Label  departTLabel = new Label();
-		departTLabel.setText("Depart Time: " + departTime.toString());
+		departTLabel.setText("Depart Time: " + this.getDepartTime());
 		Label arrivalTLabel = new Label();
-		arrivalTLabel.setText("Arrive Time: " + arrivalTime.toString());
+		arrivalTLabel.setText("Arrival Time: " + this.getArrivalTime());
 		Label capLabel = new Label();
-		capLabel.setText("Seat Cap.: " + capacity.getValue().toString());
+		capLabel.setText("Seats Available: " + capacity.getValue().toString());
 		Label layoverLabel = new Label();
-		layoverLabel.setText(layover.getValue());
+		layoverLabel.setText("Layover: " + layover.getValue() + "hrs");
 		
 		selector = new RadioButton();
 		

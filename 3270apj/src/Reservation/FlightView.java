@@ -61,12 +61,15 @@ public class FlightView extends Application {
 
 	public static TableView<Flight> table = new TableView<Flight>();
 
+	Stage flightViewStage;
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	// Table UI
 	public void start(Stage stage) {
+		flightViewStage = stage;
 		Scene scene = new Scene(new Group());
 		stage.setTitle("Flight Information");
 		stage.setFullScreen(true);
@@ -229,7 +232,17 @@ public class FlightView extends Application {
 		
 		//create back button
 		Button backButton = new Button("Back");
-		
+		backButton.setOnAction(e -> {
+			try {
+				Stage adminStage = new Stage();
+				AdminStage booking = new AdminStage();
+				booking.start(adminStage);
+				adminStage.show();
+				flightViewStage.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
 		
 		// create add box
 		HBox addBox = new HBox();
