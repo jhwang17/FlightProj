@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class LogIn extends Application {
 	
 	Stage loginStage;
+	public static int userID;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -114,6 +115,7 @@ public class LogIn extends Application {
 						 try {
         				 		Stage customerStage = new Stage();
         				 		CustomerStage booking = new CustomerStage();
+        				 		booking.userID = userID;
         				 		booking.start(customerStage);
         				 		customerStage.show();
         				 		loginStage.close();
@@ -205,6 +207,7 @@ public class LogIn extends Application {
 				if(userName.equals(c.getUserName())  ) {
 					System.out.println("Username: "+c.getUserName()+" Password: "+c.getPassword());
 					if(password.equals(c.getPassword())) {
+						userID = c.getIdCustomer();
 						return true;
 					}
 					else {

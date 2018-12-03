@@ -3,6 +3,7 @@ package Application;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.layout.VBox;
 
 public class Flight {
@@ -18,6 +19,7 @@ public class Flight {
 	SimpleStringProperty layover;
 	SimpleIntegerProperty idAirport;
 	SimpleIntegerProperty idAirplane;
+	public static RadioButton selector;
 	double price;
 	
 	public Flight() {
@@ -48,11 +50,13 @@ public class Flight {
 		Label layoverLabel = new Label();
 		layoverLabel.setText(layover.getValue());
 		
+		selector = new RadioButton();
+		
 		//Possibly don't need to include flightID and capacity for viewers??
 		//Needs depart/arrival cities and number of seats available 
 		
 		
-		layout.getChildren().addAll(departDLabel, arrivalDLabel, departTLabel, arrivalTLabel, capLabel, layoverLabel);
+		layout.getChildren().addAll(departDLabel, arrivalDLabel, departTLabel, arrivalTLabel, capLabel, layoverLabel, selector);
 		return layout;
 	}
 	
