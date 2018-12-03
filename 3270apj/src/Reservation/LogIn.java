@@ -197,10 +197,12 @@ public class LogIn extends Application {
 		else {
 			for(Customer c:customers) {
 				if(userName.equals(c.getUserName())  ) {
+					System.out.println("Username: "+c.getUserName()+" Password: "+c.getPassword());
 					if(password.equals(c.getPassword())) {
 						return true;
 					}
 					else {
+						
 						return false;
 					}
 				}
