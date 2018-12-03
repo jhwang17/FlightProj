@@ -43,11 +43,11 @@ public abstract class Booking extends Application {
 	VBox botLayout, topLayout, rightLayout;
 	
 	Button backBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
-	ToggleGroup travelType;
+	static ToggleGroup travelType;
 	RadioButton oneWay, roundTrip;
 	Button setSortBtn;
 
-	ToggleGroup sortOptions;
+	static ToggleGroup sortOptions;
 	RadioButton sortPrice, sortTime, sortClass;
 	TextField fromF, toF;
 	DatePicker departureDate, arrivalDate;
@@ -56,10 +56,10 @@ public abstract class Booking extends Application {
 	// Flights
 	FlightData flightDB;
 	ObservableList<Flight> flightList;
-	ObservableList<Flight> searchList;
+	private static ObservableList<Flight> searchList;
+	ToggleGroup selectedFlight;
 	
-	// Database variables
-	Database db;
+	public static int userID;
 	
 	
 	public static void main(String[] args) {
@@ -133,6 +133,7 @@ public abstract class Booking extends Application {
 		oneWay.setText("One Way");
 		oneWay.setFont(new Font("Arial", 18));
 		oneWay.setToggleGroup(travelType);
+		oneWay.setSelected(true);
 		
 		// Round Trip
 		RadioButton roundTrip = new RadioButton();
@@ -186,11 +187,20 @@ public abstract class Booking extends Application {
 		returnL.setFont(new Font("Arial", 20));
 		returnL.setAlignment(Pos.CENTER_RIGHT);
 		returnL.setPrefWidth(115);
-		locationOptions.add(returnL, 0, 3);
+		//locationOptions.add(returnL, 0, 3);
 		
 		arrivalDate = new DatePicker();
 		arrivalDate.setPromptText(dateFormat.format(today).toString());
-		locationOptions.add(arrivalDate, 1, 3);
+		
+		roundTrip.setOnAction(e -> {
+			locationOptions.add(returnL, 0, 3);
+			locationOptions.add(arrivalDate, 1, 3);
+		});
+		
+		oneWay.setOnAction(e -> {
+			locationOptions.getChildren().remove(returnL);
+			locationOptions.getChildren().remove(arrivalDate);
+		});
 		
 		// Creates/Adds number of passengers options 
 		HBox passengerOptions = new HBox();
@@ -253,7 +263,7 @@ public abstract class Booking extends Application {
 		layout.getChildren().addAll(row1, row2, row3);
 		
 		clearTrigger();
-		searchTrigger();
+		searchTrigger(fromF, toF);
 		sortTrigger();
 		reserveTrigger();
 		
@@ -316,38 +326,61 @@ public abstract class Booking extends Application {
 			departureDate.setValue(null);
 			arrivalDate.setValue(null);
 			dropList.setValue(null);
+			rightLayout.getChildren().clear();
+			searchList.clear();
 		});
 	}
 	
-	private void searchTrigger() {
-		//FXCollections.copy(searchList, flightList);
+	private void searchTrigger(TextField from, TextField to) {
+		searchList = FXCollections.observableArrayList();
 		
 		searchBtn.setOnAction(e -> {
-			if(fromF.getText().isEmpty() || toF.getText().isEmpty() || !departureDate.hasProperties() || !arrivalDate.hasProperties()) {
-				GridPane alert = new GridPane();
-				Scene sc = new Scene(alert, 200, 200);
-				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
-						"Please fill in empty fields");
-			} else if(departureDate.getValue().isAfter(arrivalDate.getValue())) {
-				GridPane alert = new GridPane();
-				Scene sc = new Scene(alert, 200, 200);
-				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
-						"Set dates are not valid");
-			} else {
-				for(int i = 0; i < flightList.size(); i++) {
-					if(!searchList.get(i).getDepartLocation().matches(fromF.toString()) 
-							&& !searchList.get(i).getArrivalLocation().matches(toF.toString())) {
-						searchList.remove(i);
+			try {
+				if(travelType.getSelectedToggle() == roundTrip) { 
+					if(arrivalDate.getValue() == null) {
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
+								"Please fill in empty fields");
+					} else if(departureDate.getValue().isAfter(arrivalDate.getValue())) {
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
+								"Set dates are not valid");
+					}
+				} else if(fromF.getText().isEmpty() || toF.getText().isEmpty() || departureDate.getValue() == null) {
+					GridPane alert = new GridPane();
+					Scene sc = new Scene(alert, 200, 200);
+					showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
+							"Please fill in empty fields"); 
+				} else {
+					String departingFrom = from.textProperty().get();
+					String arrivingTo = to.textProperty().get();
+					
+					for(int i = 0; i < flightList.size(); i++) {
+						String depart = flightList.get(i).getDepartLocation().toLowerCase();
+						String arrive = flightList.get(i).getArrivalLocation().toLowerCase();
+						
+						if(depart.contains(departingFrom) && arrive.contains(arrivingTo)) {
+							
+							searchList.add(flightList.get(i));
+						}
+					
 					}
 					
-					if(!searchList.get(i).getDepartDate().matches(departureDate.toString()) 
-							&& !searchList.get(i).getArrivalDate().matches(arrivalDate.toString())) {
-						searchList.remove(i);
+					if(searchList.isEmpty()) {
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
+								"No flights found");
+					} else {
+						rightLayout.getChildren().add(searchFlights());
+						
 					}
-				}
-				rightLayout.getChildren().add(searchFlights());
+				}	
+			} catch(Exception e1) {
+				e1.printStackTrace();
 			}
-			
 		});
 	}
 	
@@ -376,8 +409,8 @@ public abstract class Booking extends Application {
 				comparator = Comparator.comparing(Flight::getIdFlight);
 			}
 			
-			FXCollections.sort(flightList, comparator);
-			searchBtn.arm();
+			FXCollections.sort(searchList, comparator);
+			searchTrigger(fromF, toF);
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
@@ -390,8 +423,12 @@ public abstract class Booking extends Application {
 		VBox layout = new VBox();
 		
 		double height = 0;
+		
+		selectedFlight = new ToggleGroup();
+		
 		for(int i = 0; i < searchList.size(); i++) {
-			layout.getChildren().add(searchList.get(i).flightLayout());
+			layout.getChildren().addAll(searchList.get(i).flightLayout());
+			searchList.get(i).selector.setToggleGroup(selectedFlight);
 			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
@@ -453,7 +490,6 @@ class CustomerStage extends Booking {
 
 	@Override
 	public void reserveTrigger() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -556,7 +592,7 @@ class AdminStage extends Booking {
 	
 	@Override
 	public void reserveTrigger() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }
