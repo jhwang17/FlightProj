@@ -26,9 +26,9 @@ public class Warning extends Stage {
 		this.setTitle("Warning!");
 		this.setResizable(false);
 		this.setScene(scene);
-		//this.UIHandler();
 	}
 	
+	// Sets window layout
 	private Scene sceneLayout() {
 		VBox layout = new VBox();
 		layout.setPadding(new Insets(10, 0, 0, 0));
@@ -61,13 +61,6 @@ public class Warning extends Stage {
 		Scene scene = new Scene(layout, 300, 100);
 		
 		exitBtn.setOnAction(e -> {
-			/*
-			Stage loginStage = new Stage();
-			LogIn loginScreen = new LogIn();
-			loginScreen.start(loginStage);
-			currentStage.close();
-			this.close();
-			*/
 			try {
 				Stage tempStage = new Stage();
 				nextStage.start(tempStage);
@@ -81,23 +74,6 @@ public class Warning extends Stage {
 		cancelBtn.setOnAction(e -> {
 			this.close();
 		});
-		
-		//UIHandler();
 		return scene;
 	}
-	
-	/*
-	private void UIHandler() {
-		exitBtn.setOnAction(e -> {
-			Stage loginStage = new Stage();
-			LogIn loginScreen = new LogIn();
-			loginScreen.start(loginStage);
-			parentStage.close();
-			this.close();
-		});
-		
-		cancelBtn.setOnAction(e -> {
-			this.close();
-		});
-	}*/
 }

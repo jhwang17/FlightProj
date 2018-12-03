@@ -1,6 +1,5 @@
 package Reservation;
 
-
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.event.*;
@@ -18,7 +17,6 @@ import Data.CustomerData;
 import Application.Customer;
 import java.util.ArrayList;
 
-
 public class LogIn extends Application {
 	
 	Stage loginStage;
@@ -26,7 +24,7 @@ public class LogIn extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
-		}
+	}
 	
 	public void start(Stage stage) {
 		loginStage = stage;
@@ -41,6 +39,7 @@ public class LogIn extends Application {
 		stage.show();
 		}
 	
+	// Sets Layout 
 	public GridPane createLogInFormPane() {
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
@@ -48,8 +47,9 @@ public class LogIn extends Application {
 		gridPane.setVgap(10);
 		gridPane.setPadding(new Insets(25, 25, 25, 25));
 		return gridPane;
-		}	
+	}	
 	
+	// Sets UI control
 	public void addUIControls(GridPane gridPane) {
 		//Header
 		Label headerLabel = new Label("APJ - Log In");
@@ -100,34 +100,28 @@ public class LogIn extends Application {
 		 EventHandler<MouseEvent> loginEvent = new EventHandler<MouseEvent>() {
 	         public void handle(MouseEvent e) {
 				 if(e.getButton() == MouseButton.PRIMARY) {
-					 if(checkCridentialsAdmin(userNameF.getText(),passwordF.getText())) {
-							try {
-								Stage adminStage = new Stage();
-								AdminStage booking = new AdminStage();
-								booking.start(adminStage);
-								adminStage.show();
-								loginStage.close();
-								}catch(Exception ex) {
+					if(checkCridentialsAdmin(userNameF.getText(),passwordF.getText())) {
+						try {
+							Stage adminStage = new Stage();
+							AdminStage booking = new AdminStage();
+							booking.start(adminStage);
+							adminStage.show();
+							loginStage.close();
+						} catch(Exception ex) {
 										
-								}
-					}
-					 else if(checkCridentialsUser(userNameF.getText(),passwordF.getText())) {
+						}
+					} else if(checkCridentialsUser(userNameF.getText(),passwordF.getText())) {
 						 try {
-        				 		Stage customerStage = new Stage();
-        				 		CustomerStage booking = new CustomerStage();
-        				 		booking.userID = userID;
-        				 		booking.start(customerStage);
-        				 		customerStage.show();
-        				 		loginStage.close();
-        			 		}catch(Exception ex) {
+    				 		Stage customerStage = new Stage();
+    				 		CustomerStage booking = new CustomerStage();
+    				 		booking.userID = userID;
+    				 		booking.start(customerStage);
+    				 		customerStage.show();
+    				 		loginStage.close();
+        			 	}catch(Exception ex) {
 
-        			 		}
-					 }
-
-					 
-        		 
-			
-					 else {
+        			 	}
+					 } else {
 						 showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Login Error!",
 														"Incorrect Username or Password");
 					 }
@@ -160,7 +154,7 @@ public class LogIn extends Application {
                 		}
                 	}
                 };*/
-     logInButton.addEventHandler(MouseEvent.MOUSE_CLICKED, loginEvent);
+    logInButton.addEventHandler(MouseEvent.MOUSE_CLICKED, loginEvent);
 	EventHandler<MouseEvent> registerEvent = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
@@ -170,12 +164,13 @@ public class LogIn extends Application {
 					SignUpForm signUpForm = new SignUpForm();
 					signUpForm.start(registerStage);
 					registerStage.show();
-					}catch(Exception ex) {
-
-					}
+				} catch(Exception ex) {
+				
+				}
 			}
 		}
 	};
+	
 	registerButton.addEventHandler(MouseEvent.MOUSE_CLICKED, registerEvent);
 	
 	EventHandler<MouseEvent> forgetEvent = new EventHandler<MouseEvent>() {
@@ -187,16 +182,16 @@ public class LogIn extends Application {
 					ForgetPassword forget = new ForgetPassword();
 					forget.start(forgetStage);
 					forgetStage.show();
-					}catch(Exception ex) {
+				} catch(Exception ex) {
 
-					}
+				}
 			}
 		}
 	};
-	forgetPasswordButton.addEventHandler(MouseEvent.MOUSE_CLICKED, forgetEvent);
+		forgetPasswordButton.addEventHandler(MouseEvent.MOUSE_CLICKED, forgetEvent);
 	}
 		
-
+	// Checks if username and password matches a Customer 
 	boolean checkCridentialsUser(String userName,String password) {
 		ObservableList<Customer> customers = CustomerData.getCustomer();
 
@@ -211,7 +206,6 @@ public class LogIn extends Application {
 						return true;
 					}
 					else {
-						
 						return false;
 					}
 				}
@@ -219,7 +213,9 @@ public class LogIn extends Application {
 			return false;
 		}
 	}
-	boolean checkCridentialsAdmin(String userName,String password){
+	
+	// Checks if username and password matches an Admin 
+	boolean checkCridentialsAdmin(String userName,String password) {
 				if(userName.equalsIgnoreCase("Admin") ) {
 					if(password.equalsIgnoreCase("Admin")) {
 						return true;
@@ -229,7 +225,6 @@ public class LogIn extends Application {
 					}
 				}
 			return false;
-
 	}
 	
  
@@ -243,6 +238,8 @@ public class LogIn extends Application {
 		}
 		return false;
 	}*/
+	
+	// Sets alert popup window
 	public void showAlert(Alert.AlertType alertType,Window owner,String title,String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);

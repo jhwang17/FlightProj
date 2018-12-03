@@ -36,9 +36,11 @@ import javafx.stage.Window;
 
 public abstract class Booking extends Application {
 	
+	// Window Dimensions
 	public static final double WIDTH = 750;
 	public static final double HEIGHT = 400;
 	
+	// Window Components
 	Stage bookingStage, warningStage;
 	BorderPane leftLayout;
 	VBox botLayout, topLayout, rightLayout;
@@ -54,7 +56,7 @@ public abstract class Booking extends Application {
 	DatePicker departureDate, arrivalDate;
 	ComboBox dropList;
 	
-	// Flights
+	// Flights Components
 	FlightData flightDB;
 	ObservableList<Reserve> currentBookings;
 	ObservableList<Flight> flightList;
@@ -95,12 +97,14 @@ public abstract class Booking extends Application {
 		stage.show();
 	}
 	
+	// Controls right half of window
 	public void rightLayout() {
 		rightLayout = new VBox();
 		
 		rightLayout.setPrefSize(WIDTH / 2, HEIGHT / 2);
 	}
 	
+	// Controls left half of window
 	public void leftLayout() {
 		leftLayout = new BorderPane();
 		leftLayout.setPrefSize(WIDTH / 2, HEIGHT / 2);
@@ -116,7 +120,7 @@ public abstract class Booking extends Application {
 		leftLayout.setBottom(botLayout);
 	}
 	
-	//Default display for quadrant 2
+	// Default display for quadrant 2
 	public VBox topLeftDefault() {
 		// Creates layout frame for the top left section
 		VBox layout = new VBox();
@@ -194,6 +198,7 @@ public abstract class Booking extends Application {
 		arrivalDate = new DatePicker();
 		arrivalDate.setPromptText(dateFormat.format(today).toString());
 		
+		// Controls travel type options
 		roundTrip.setOnAction(e -> {
 			locationOptions.add(returnL, 0, 3);
 			locationOptions.add(arrivalDate, 1, 3);
@@ -225,8 +230,7 @@ public abstract class Booking extends Application {
 		return layout;
 	}
 
-	// Default display for quadrant3
-
+	// Default display for quadrant 3
 	protected VBox bottomLeftDefault() {
 		VBox layout = new VBox();
 		layout.setSpacing(10);
@@ -386,17 +390,19 @@ public abstract class Booking extends Application {
 		});
 	}
 	
+	// Sort button Trigger / Changes quad 3 to sort layout
 	private void sortTrigger() {
 		sortBtn.setOnAction(e -> {
 			leftLayout.setBottom(sortLayout());
 		});
 	}
 	
-	
+	// currentBookings Trigger
 	protected void myFlightsTrigger() {
 		
 	}
 	
+	// Configures sort settings, reactivates search trigger
 	private void setSortTrigger() {
 		setSortBtn.setOnAction(e -> {
 			Comparator<Flight> comparator = Comparator.comparing(Flight::getIdFlight);
@@ -417,8 +423,7 @@ public abstract class Booking extends Application {
 		});
 	}
 	
-	public abstract HBox userSettings();
-	
+	// Reserve button Trigger
 	private void reserveTrigger() {
 		ReserveData reserveDB = new ReserveData();
 		
@@ -429,6 +434,9 @@ public abstract class Booking extends Application {
 		}
 	}
 	
+	public abstract HBox userSettings();
+	
+	// Layout for right half of window 
 	private VBox searchFlights() {
 		VBox layout = new VBox();
 		
@@ -466,6 +474,7 @@ public abstract class Booking extends Application {
 		return layout;
 	}
 	
+	// Layout for alerts
 	public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
@@ -476,6 +485,7 @@ public abstract class Booking extends Application {
 	}
 }
 
+// Layout for Customers
 class CustomerStage extends Booking {
 
 	@Override
@@ -501,6 +511,7 @@ class CustomerStage extends Booking {
 	
 }
 
+// Layout for Admins
 class AdminStage extends Booking {
 	
 	Button admSettingsBtn, viewFlightBtn, viewUsersBtn, admBackBtn;
@@ -561,12 +572,14 @@ class AdminStage extends Booking {
 		return layout;
 	}
 	
+	// Admin Setting button Trigger
 	private void admSettingsTrigger() {
 		admSettingsBtn.setOnAction(e -> {
 			leftLayout.setBottom(adminSettings());
 		});
 	}
 	
+	// View Flight button Trigger
 	private void viewFlightTrigger() {
 		viewFlightBtn.setOnAction(e -> {
 			Stage stage = new Stage();
@@ -576,19 +589,17 @@ class AdminStage extends Booking {
 		});
 	}
 	
+	// View Customer button Trigger
 	private void viewUsersTrigger() {
 		viewUsersBtn.setOnAction(e -> {
 			Stage stage = new Stage();
 			CustomerView nextStage = new CustomerView();
 			nextStage.start(stage);
 			bookingStage.close();
-			/*
-			Warning warningStage = new Warning(bookingStage, nextStage);
-			warningStage.show();
-			*/
 		});
 	}
 	
+	// Back button Trigger, returns back to default layout
 	private void admBackTrigger() {
 		admBackBtn.setOnAction(e -> {
 			leftLayout.setBottom(bottomLeftDefault());

@@ -43,7 +43,6 @@ public class FlightData {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		return flights;
 	}
 	
@@ -91,9 +90,9 @@ public class FlightData {
         }
     }
     
-  //method to update a flight
+    //method to update a flight
     public static void updateFlight() {
-        try{
+        try {
         	//Update flight info to table        			
         	String s = "UPDATE sys.Flight SET departLocation=?, arrivalLocation=?, departDate=?, arrivalDate=?, departTime=?, arrivalTime=?, capacity=?, layover=? WHERE idFlight='" + FlightView.idFlightU.getText() + "'";
         	ps = con.prepareStatement(s);	
@@ -119,15 +118,14 @@ public class FlightData {
 			FlightView.capacityU.clear();
 			FlightView.layoverU.clear();
 			
-			
-        } catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
     
     //method to delete a flight
-    public static void deleteFlight(){
-        try{
+    public static void deleteFlight() {
+        try {
         	//Delete flight info in table
         	String s = "DELETE FROM sys.Flight WHERE idFlight=?";
         	ps = con.prepareStatement(s);

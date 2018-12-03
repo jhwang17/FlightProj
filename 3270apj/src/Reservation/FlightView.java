@@ -282,6 +282,7 @@ public class FlightView extends Application {
 		table.getItems().addAll(data);
 	}
 	
+	// Layout for alerts 
 	public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);

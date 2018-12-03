@@ -19,6 +19,8 @@ public class Reserve {
 		this.idSeat = new SimpleIntegerProperty(idSeat);			
 	}
 	
+	// Getters and Setters for variables
+	
 	public int getIdReservation() {
 		return idReservation.get();
 	}

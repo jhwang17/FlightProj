@@ -46,6 +46,7 @@ public class SignUpForm extends Application {
 		stage.show();
 	}
 
+	// Sets layout
 	public GridPane createLogInFormPane() {
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
@@ -56,6 +57,7 @@ public class SignUpForm extends Application {
 		return gridPane;
 	}
 
+	// Sets UI Controls and layout
 	public void addUIControls(GridPane gridPane) {
 		// Header
 		Label headerLabel = new Label("Registration Form");
@@ -142,6 +144,7 @@ public class SignUpForm extends Application {
 		final Text actiontarget = new Text();
 		gridPane.add(actiontarget, 1, 15);
 
+		// Signing up event
 		EventHandler<MouseEvent> signupEvent = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -155,7 +158,7 @@ public class SignUpForm extends Application {
 								|| userNameF.getText().isEmpty() || passwordF.getText().isEmpty()
 								|| securityQuestionF.getText().isEmpty() || securityAnswerF.getText().isEmpty()) {
 
-							showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!",
+								showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!",
 									"Please fill in blank!");
 
 						} else {
@@ -187,7 +190,6 @@ public class SignUpForm extends Application {
 					            alert.showAndWait();
 							}
 						}
-
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -197,6 +199,7 @@ public class SignUpForm extends Application {
 
 		signUpButton.addEventHandler(MouseEvent.MOUSE_CLICKED, signupEvent);
 
+		// Back button event
 		EventHandler<MouseEvent> backEvent = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
@@ -217,6 +220,7 @@ public class SignUpForm extends Application {
 		backButton.addEventHandler(MouseEvent.MOUSE_CLICKED, backEvent);
 	}
 
+	// Layout for alerts
 	public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
@@ -226,6 +230,7 @@ public class SignUpForm extends Application {
 		alert.show();
 	}
 
+	// Checks and prevents duplicate username creation
 	public boolean checkUsernameExist(String userName) {
 		con = Database.ConnectDB();
 		try {
@@ -241,6 +246,5 @@ public class SignUpForm extends Application {
 			e.printStackTrace();
 			return true;
 		}
-
 	}
 }

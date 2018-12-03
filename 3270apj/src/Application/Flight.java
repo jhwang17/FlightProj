@@ -30,6 +30,7 @@ public class Flight {
 		return price;
 	}
 	
+	// Layout for each individual flights when searched
 	public VBox flightLayout() {
 		VBox layout = new VBox();
 		layout.setPrefSize(150, 200);
@@ -74,6 +75,8 @@ public class Flight {
 		this.capacity = new SimpleIntegerProperty(capacity);
 		this.layover = new SimpleStringProperty(layover);
 	}
+	
+	// Getters and Setters for variables
 	
 	public int getIdFlight() {
 		return idFlight.get();

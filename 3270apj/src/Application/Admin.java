@@ -9,6 +9,7 @@ public class Admin {
 	public Admin() {
 		
 	}
+	
 	public Admin(int idAdmin, String firstName, String lastName, String email) {
 		this.idAdmin = idAdmin;
 		this.firstName = firstName;
@@ -16,6 +17,7 @@ public class Admin {
 		this.email = email;
 	}
 
+	// Getters and Setters for variables 
 	public int getIdAdmin() {
 		return idAdmin;
 	}
