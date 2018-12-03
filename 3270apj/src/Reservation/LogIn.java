@@ -169,7 +169,24 @@ public class LogIn extends Application {
 		}
 	};
 	registerButton.addEventHandler(MouseEvent.MOUSE_CLICKED, registerEvent);
-		 }
+	
+	EventHandler<MouseEvent> forgetEvent = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent e) {
+			if(e.getButton() == MouseButton.PRIMARY) {
+				try {
+					Stage forgetStage = new Stage();
+					ForgetPassword forget = new ForgetPassword();
+					forget.start(forgetStage);
+					forgetStage.show();
+					}catch(Exception ex) {
+
+					}
+			}
+		}
+	};
+	forgetPasswordButton.addEventHandler(MouseEvent.MOUSE_CLICKED, forgetEvent);
+	}
 		
 
 	boolean checkCridentialsUser(String userName,String password) {
@@ -179,7 +196,7 @@ public class LogIn extends Application {
 			return false;		}
 		else {
 			for(Customer c:customers) {
-				if(c.getUserName() == (userName) ) {
+				if(userName.equals(c.getUserName())  ) {
 					if(password.equals(c.getPassword())) {
 						return true;
 					}
@@ -204,6 +221,7 @@ public class LogIn extends Application {
 
 	}
 	
+ 
 	
 	
 		/*Annie
