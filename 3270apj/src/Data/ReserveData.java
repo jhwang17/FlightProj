@@ -43,10 +43,11 @@ public class ReserveData {
 				
 				return reserves;
 			}
-	/*		
+			
 	//method to add a reservation
-    public static void insertReserve() {
+    public void insertReserve(int cusID, int flightID, int seatID) {
         try {
+        	/*
         	if (ReserveView.idCustomerA.getEditor().getText().isEmpty() ||
         		ReserveView.idFlightA.getEditor().getText().isEmpty() ||
         		ReserveView.idSeatA.getText().isEmpty()) {
@@ -69,12 +70,22 @@ public class ReserveData {
 			ReserveView.idCustomerA.clear();
 			ReserveView.idFlightA.clear();
 			ReserveView.idSeatA.clear();
+        	*/
+        	
+        	//Add reservation to table
+        	String s = "INSERT INTO sys.Reservation (idReservation, idCustomer, idFlight, idSeat) VALUES (default,?,?,?)";
+			ps = con.prepareStatement(s);
+			ps.setString(1, String.valueOf(cusID));
+			ps.setString(2, String.valueOf(flightID));
+			ps.setString(3, String.valueOf(seatID));
+			
+			ps.executeUpdate();
 			
         } catch(Exception e){
             e.printStackTrace();
         }
     }
-    
+    /*
   //method to update a reservation
     public static void updateReserve() {
         try{

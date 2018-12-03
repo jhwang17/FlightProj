@@ -67,12 +67,15 @@ public class CustomerView extends Application{
 	
 	public static TableView<Customer> table = new TableView<Customer>();
 	
+	Stage customerViewStage;
+	
 	public static void main(String[] args) {
         launch(args);
     }
 	
 	//Table UI
 	public void start(Stage stage) {
+		customerViewStage = stage;
 		Scene scene = new Scene(new Group());
 		stage.setTitle("Customer Information");
 		stage.setFullScreen(true);
@@ -264,6 +267,17 @@ public class CustomerView extends Application{
 		
 		//create back button
 		Button backButton = new Button("Back");
+		backButton.setOnAction(e -> {
+			try {
+				Stage adminStage = new Stage();
+				AdminStage booking = new AdminStage();
+				booking.start(adminStage);
+				adminStage.show();
+				customerViewStage.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
 		
 		
 		//create box to add text

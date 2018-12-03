@@ -6,8 +6,9 @@ import java.util.Comparator;
 import java.util.Date;
 
 import Application.Flight;
-import Data.Database;
+import Application.Reserve;
 import Data.FlightData;
+import Data.ReserveData;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,9 +56,10 @@ public abstract class Booking extends Application {
 	
 	// Flights
 	FlightData flightDB;
+	ObservableList<Reserve> currentBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
-	ToggleGroup selectedFlight;
+	Flight selectedFlight;
 	
 	public static int userID;
 	
@@ -331,6 +333,7 @@ public abstract class Booking extends Application {
 		});
 	}
 	
+	// Search button Trigger
 	private void searchTrigger(TextField from, TextField to) {
 		searchList = FXCollections.observableArrayList();
 		
@@ -362,7 +365,6 @@ public abstract class Booking extends Application {
 						String arrive = flightList.get(i).getArrivalLocation().toLowerCase();
 						
 						if(depart.contains(departingFrom) && arrive.contains(arrivingTo)) {
-							
 							searchList.add(flightList.get(i));
 						}
 					
@@ -417,18 +419,24 @@ public abstract class Booking extends Application {
 	
 	public abstract HBox userSettings();
 	
-	public abstract void reserveTrigger();
+	private void reserveTrigger() {
+		ReserveData reserveDB = new ReserveData();
+		
+		//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+	}
 	
 	private VBox searchFlights() {
 		VBox layout = new VBox();
 		
 		double height = 0;
 		
-		selectedFlight = new ToggleGroup();
+		selectedFlight = new Flight();
 		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());
-			searchList.get(i).selector.setToggleGroup(selectedFlight);
+			if(searchList.get(i).selector.isSelected()) {
+				selectedFlight = searchList.get(i);
+			}
 			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
@@ -485,12 +493,6 @@ class CustomerStage extends Booking {
 		super.myFlightsTrigger();
 		
 		return row3;
-	}
-	
-
-	@Override
-	public void reserveTrigger() {
-		
 	}
 	
 }
@@ -587,12 +589,5 @@ class AdminStage extends Booking {
 		admBackBtn.setOnAction(e -> {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
-	}
-
-	
-	@Override
-	public void reserveTrigger() {
-		
-		
 	}
 }
