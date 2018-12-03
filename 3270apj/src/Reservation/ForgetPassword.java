@@ -169,18 +169,28 @@ public class ForgetPassword extends Application {
 										"No Customer!");
 							}
 							else {
-								//int marker_2 = 0;
+								int marker_2 = 0;
 								for(Customer c:customers) {
 									if(userNameF.getText().equals(c.getUserName())  ) {
-										if(c.getSecurityAnswer().equals(passwordF.getText())) {
+										System.out.println("answers: "+c.getSecurityAnswer()+" password: "+c.getPassword());
+										if(passwordF.getText().equals(c.getSecurityAnswer())) {
 											showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Your Password is:",
 													c.getPassword());
+											marker = 0;
+											marker_2 = 1;
+										}else {
+											showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Error!",
+													"Wrong answer! Please check your answer");
 										}
 									}
 								}
 								
 							}
 					 }
+				}
+				else {
+					showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Error!",
+							"Please get your security question first");
 				}
 			}
 		}
