@@ -43,6 +43,7 @@ public class Customer {
 		securityAnswer = new SimpleStringProperty(sAnswer);
 	}
 	
+	// Getter and Setters for variables
 	public int getIdCustomer() {
 		return idCustomer.get();
 		

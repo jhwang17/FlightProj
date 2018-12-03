@@ -20,29 +20,29 @@ public class ReserveData {
 	
 	public static ObservableList<Reserve> getReserve() {
 		//show reservation data
-				reserves = FXCollections.observableArrayList();
-				con = Database.ConnectDB();
-				try {
-					String s = "SELECT * FROM sys.Reservation";
-					statement = con.createStatement();
-					rs = statement.executeQuery(s);
-		            if(rs != null) {
-		                while (rs.next()) {
-		                	Reserve reserve = new Reserve();
-		                	reserve.setIdReservation(rs.getInt(1));
-		                	reserve.setIdCustomer(rs.getInt(2));
-		                	reserve.setIdFlight(rs.getInt(3));
-		                	reserve.setIdSeat(rs.getInt(4));
-		                	
-		                	reserves.add(reserve);
-		                }
-		            }
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-				
-				return reserves;
-			}
+		reserves = FXCollections.observableArrayList();
+		con = Database.ConnectDB();
+		try {
+			String s = "SELECT * FROM sys.Reservation";
+			statement = con.createStatement();
+			rs = statement.executeQuery(s);
+            if(rs != null) {
+                while (rs.next()) {
+                	Reserve reserve = new Reserve();
+                	reserve.setIdReservation(rs.getInt(1));
+                	reserve.setIdCustomer(rs.getInt(2));
+                	reserve.setIdFlight(rs.getInt(3));
+                	reserve.setIdSeat(rs.getInt(4));
+                	
+                	reserves.add(reserve);
+                }
+            }
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return reserves;
+	}
 			
 	//method to add a reservation
     public void insertReserve(int cusID, int flightID, int seatID) {

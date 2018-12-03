@@ -45,7 +45,6 @@ public class CustomerData {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		return customers;
 	}
 	
@@ -104,7 +103,7 @@ public class CustomerData {
         }
     }
     
-  //method to update a customer
+    //method to update a customer
     public static void updateCustomer() {
         try{
         	//Update customer info to table
@@ -142,7 +141,6 @@ public class CustomerData {
 			CustomerView.passwordU.clear();
 			CustomerView.securityQuestionU.clear();
 			CustomerView.securityAnswerU.clear();
-			
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -164,8 +162,6 @@ public class CustomerData {
 			
 			CustomerView.idCustomerD.clear();
 			CustomerView.ssnD.clear();
-			
-			
         } catch(Exception e) {
         	e.printStackTrace();
         }
