@@ -20,11 +20,16 @@ import java.util.ArrayList;
 
 
 public class LogIn extends Application {
+	
+	Stage loginStage;
+	
 	public static void main(String[] args) {
 		launch(args);
 		}
 	
 	public void start(Stage stage) {
+		loginStage = stage;
+		
 		GridPane gridPane = createLogInFormPane();
 		addUIControls(gridPane);
 		Scene scene = new Scene(gridPane, 300, 275);
@@ -88,7 +93,7 @@ public class LogIn extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				actiontarget.setFill(Color.FIREBRICK);
-		    }
+		    }
 		});*/
 	
 		 EventHandler<MouseEvent> loginEvent = new EventHandler<MouseEvent>() {
@@ -100,17 +105,18 @@ public class LogIn extends Application {
 								AdminStage booking = new AdminStage();
 								booking.start(adminStage);
 								adminStage.show();
+								loginStage.close();
 								}catch(Exception ex) {
 										
 								}
 					}
 					 else if(checkCridentialsUser(userNameF.getText(),passwordF.getText())) {
 						 try {
-        				 		Stage loginStage = new Stage();
+        				 		Stage customerStage = new Stage();
         				 		CustomerStage booking = new CustomerStage();
-        				 		booking.start(loginStage);
-        				 		loginStage.show();
-				
+        				 		booking.start(customerStage);
+        				 		customerStage.show();
+        				 		loginStage.close();
         			 		}catch(Exception ex) {
 
         			 		}
@@ -128,30 +134,30 @@ public class LogIn extends Application {
 			 }
 		 };
 	         /* Annie	
-        				try {
-                				if (userNameF.getText().isEmpty() || passwordF.getText().isEmpty()) {
-                	
-                					showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), 
-                							"Login Error!", "Incorrect Username or Password");
-                					
-                				} else if (checkCridentials(userNameF.getText(),passwordF.getText())) {				
-                					Stage loginStage = new Stage();
-                					Booking booking = new Booking();
-                					booking.start(loginStage);
-                					loginStage.show();
-             
-                				} else if (userNameF.getText().equalsIgnoreCase("admin") && passwordF.getText().equalsIgnoreCase("admin")) {
-                					Stage loginStage = new Stage();
-                					Booking booking = new Booking();
-                					booking.start(loginStage);
-                					loginStage.show();
-                				}
-                				}catch(Exception ex) {
-            						ex.printStackTrace();
-                			}	
-                		}
-                	}
-                };*/
+        				try {
+                				if (userNameF.getText().isEmpty() || passwordF.getText().isEmpty()) {
+                	
+                					showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), 
+                							"Login Error!", "Incorrect Username or Password");
+                					
+                				} else if (checkCridentials(userNameF.getText(),passwordF.getText())) {				
+                					Stage loginStage = new Stage();
+                					Booking booking = new Booking();
+                					booking.start(loginStage);
+                					loginStage.show();
+             
+                				} else if (userNameF.getText().equalsIgnoreCase("admin") && passwordF.getText().equalsIgnoreCase("admin")) {
+                					Stage loginStage = new Stage();
+                					Booking booking = new Booking();
+                					booking.start(loginStage);
+                					loginStage.show();
+                				}
+                				}catch(Exception ex) {
+            						ex.printStackTrace();
+                			}	
+                		}
+                	}
+                };*/
      logInButton.addEventHandler(MouseEvent.MOUSE_CLICKED, loginEvent);
 	EventHandler<MouseEvent> registerEvent = new EventHandler<MouseEvent>() {
 		@Override
@@ -241,4 +247,3 @@ public class LogIn extends Application {
 		alert.show();
 	}
 }
-

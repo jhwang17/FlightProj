@@ -2,6 +2,7 @@ package Reservation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 
 import Application.Flight;
@@ -14,6 +15,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -29,6 +31,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public abstract class Booking extends Application {
 	
@@ -50,11 +53,14 @@ public abstract class Booking extends Application {
 	DatePicker departureDate, arrivalDate;
 	ComboBox dropList;
 	
+	// Flights
+	FlightData flightDB;
+	ObservableList<Flight> flightList;
+	ObservableList<Flight> searchList;
+	
 	// Database variables
 	Database db;
 	
-	//DELETE LATER !!! TESTING PURPOSES
-	int userID;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -63,6 +69,8 @@ public abstract class Booking extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		bookingStage = stage;
+		flightDB = new FlightData();
+		flightList = flightDB.getFlight();
 		
 		backBtn = new Button();
 		clearBtn = new Button();
@@ -312,8 +320,34 @@ public abstract class Booking extends Application {
 	}
 	
 	private void searchTrigger() {
+		//FXCollections.copy(searchList, flightList);
+		
 		searchBtn.setOnAction(e -> {
-			rightLayout.getChildren().add(searchFlights());
+			if(fromF.getText().isEmpty() || toF.getText().isEmpty() || !departureDate.hasProperties() || !arrivalDate.hasProperties()) {
+				GridPane alert = new GridPane();
+				Scene sc = new Scene(alert, 200, 200);
+				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
+						"Please fill in empty fields");
+			} else if(departureDate.getValue().isAfter(arrivalDate.getValue())) {
+				GridPane alert = new GridPane();
+				Scene sc = new Scene(alert, 200, 200);
+				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error",
+						"Set dates are not valid");
+			} else {
+				for(int i = 0; i < flightList.size(); i++) {
+					if(!searchList.get(i).getDepartLocation().matches(fromF.toString()) 
+							&& !searchList.get(i).getArrivalLocation().matches(toF.toString())) {
+						searchList.remove(i);
+					}
+					
+					if(!searchList.get(i).getDepartDate().matches(departureDate.toString()) 
+							&& !searchList.get(i).getArrivalDate().matches(arrivalDate.toString())) {
+						searchList.remove(i);
+					}
+				}
+				rightLayout.getChildren().add(searchFlights());
+			}
+			
 		});
 	}
 	
@@ -330,6 +364,20 @@ public abstract class Booking extends Application {
 	
 	private void setSortTrigger() {
 		setSortBtn.setOnAction(e -> {
+			Comparator<Flight> comparator = Comparator.comparing(Flight::getIdFlight);
+			
+			if(sortPrice.isPressed()) {
+				comparator = Comparator.comparingDouble(Flight::getPrice);
+			} else if(sortTime.isPressed()) {
+				comparator = Comparator.comparing(Flight::getDepartTime);
+			} else if(sortClass.isPressed()) {
+				comparator = Comparator.comparing(Flight::getPrice);
+			} else {
+				comparator = Comparator.comparing(Flight::getIdFlight);
+			}
+			
+			FXCollections.sort(flightList, comparator);
+			searchBtn.arm();
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
@@ -341,12 +389,10 @@ public abstract class Booking extends Application {
 	private VBox searchFlights() {
 		VBox layout = new VBox();
 		
-		ObservableList<Flight> data = FlightData.getFlight();
-		
 		double height = 0;
-		for(int i = 0; i < data.size(); i++) {
-			layout.getChildren().add(data.get(i).flightLayout());
-			height += data.get(i).flightLayout().getHeight();
+		for(int i = 0; i < searchList.size(); i++) {
+			layout.getChildren().add(searchList.get(i).flightLayout());
+			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
 		if(rightLayout.getHeight() < height) {
@@ -369,6 +415,15 @@ public abstract class Booking extends Application {
 		}
 		System.out.println(height);
 		return layout;
+	}
+	
+	public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+		Alert alert = new Alert(alertType);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.initOwner(owner);
+		alert.show();
 	}
 }
 

@@ -14,8 +14,8 @@ public class Customer {
 	SimpleStringProperty zipCode;
 	SimpleStringProperty email;
 	SimpleStringProperty ssn;
-	static SimpleStringProperty userName;
-	static SimpleStringProperty password;
+	SimpleStringProperty userName;
+	SimpleStringProperty password;
 	SimpleStringProperty securityQuestion;
 	SimpleStringProperty securityAnswer;
 		
@@ -116,7 +116,7 @@ public class Customer {
 		ssn = new SimpleStringProperty(ssN);
 	}
 	
-	public static String getUserName() {
+	public String getUserName() {
 		return userName.get();
 	}
 	
@@ -124,7 +124,7 @@ public class Customer {
 		userName = new SimpleStringProperty(userN);
 	}
 	
-	public static String getPassword() {
+	public String getPassword() {
 		return password.get();
 	}
 	

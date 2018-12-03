@@ -18,9 +18,14 @@ public class Flight {
 	SimpleStringProperty layover;
 	SimpleIntegerProperty idAirport;
 	SimpleIntegerProperty idAirplane;
+	double price;
 	
 	public Flight() {
 		
+	}
+	
+	public double getPrice() {
+		return price;
 	}
 	
 	public VBox flightLayout() {
