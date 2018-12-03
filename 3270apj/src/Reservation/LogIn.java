@@ -153,7 +153,6 @@ public class LogIn extends Application {
                 	}
                 };*/
      logInButton.addEventHandler(MouseEvent.MOUSE_CLICKED, loginEvent);
-
 	EventHandler<MouseEvent> registerEvent = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
