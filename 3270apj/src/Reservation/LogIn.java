@@ -18,12 +18,17 @@ import Data.CustomerData;
 import Application.Customer;
 
 public class LogIn extends Application {
+	
+	Stage loginStage;
+	
 	public static void main(String[] args) {
         launch(args);
     }
 	
 	@Override 
-	public void start(Stage stage) {  
+	public void start(Stage stage) {
+		loginStage = stage;
+		
 		GridPane gridPane = createLogInFormPane();
 		addUIControls(gridPane);
 		Scene scene = new Scene(gridPane, 300, 275);
@@ -105,6 +110,7 @@ public class LogIn extends Application {
         					CustomerStage booking = new CustomerStage();
         					booking.start(loginStage);
         					loginStage.show();
+        					
      
         				} else if (userNameF.getText().equalsIgnoreCase("admin") && passwordF.getText().equalsIgnoreCase("admin")) {
         					Stage loginStage = new Stage();
@@ -112,9 +118,10 @@ public class LogIn extends Application {
         					booking.start(loginStage);
         					loginStage.show();
         				}
-        				}catch(Exception ex) {
-    						ex.printStackTrace();
-        			}	
+        			} catch (Exception ex) {
+    					ex.printStackTrace();
+        			}
+        			loginStage.close();
         		}
         	}
         };
