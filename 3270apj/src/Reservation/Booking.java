@@ -265,7 +265,7 @@ public abstract class Booking extends Application {
 		layout.getChildren().addAll(row1, row2, row3);
 		
 		clearTrigger();
-		searchTrigger(fromF, toF);
+		searchTrigger(fromF, toF, departureDate);
 		sortTrigger();
 		reserveTrigger();
 		
@@ -334,7 +334,7 @@ public abstract class Booking extends Application {
 	}
 	
 	// Search button Trigger
-	private void searchTrigger(TextField from, TextField to) {
+	private void searchTrigger(TextField from, TextField to, DatePicker takeOffDay) {
 		searchList = FXCollections.observableArrayList();
 		
 		searchBtn.setOnAction(e -> {
@@ -412,7 +412,7 @@ public abstract class Booking extends Application {
 			}
 			
 			FXCollections.sort(searchList, comparator);
-			searchTrigger(fromF, toF);
+			searchTrigger(fromF, toF, departureDate);
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
@@ -423,6 +423,10 @@ public abstract class Booking extends Application {
 		ReserveData reserveDB = new ReserveData();
 		
 		//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+		
+		if(travelType.getSelectedToggle() == roundTrip) {
+			searchTrigger(toF, fromF, arrivalDate);
+		}
 	}
 	
 	private VBox searchFlights() {
