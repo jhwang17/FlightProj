@@ -38,13 +38,14 @@ import javafx.stage.Window;
 public abstract class Booking extends Application {
 	
 	// Window Dimensions
-	public static final double WIDTH = 750;
+	public static final double WIDTH = 900;
 	public static final double HEIGHT = 400;
 	
 	// Window Components
 	Stage bookingStage, warningStage;
 	BorderPane leftLayout;
-	VBox botLayout, topLayout, rightLayout;
+	VBox botLayout, topLayout;
+	StackPane rightLayout;
 	
 	Button logoutBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
 	static ToggleGroup travelType;
@@ -102,7 +103,7 @@ public abstract class Booking extends Application {
 	
 	// Controls right half of window
 	public void rightLayout() {
-		rightLayout = new VBox();
+		rightLayout = new StackPane();
 		
 		rightLayout.setPrefSize(WIDTH / 2, HEIGHT / 2);
 	}
@@ -214,6 +215,7 @@ public abstract class Booking extends Application {
 		
 		// Creates/Adds number of passengers options 
 		HBox passengerOptions = new HBox();
+		passengerOptions.setAlignment(Pos.CENTER);
 		passengerOptions.setPadding(new Insets(5, 0, 5, 10));
 		
 		Label passengerL = new Label();
@@ -345,7 +347,9 @@ public abstract class Booking extends Application {
 		searchList = FXCollections.observableArrayList();
 		
 		searchBtn.setOnAction(e -> {
-			try {
+			rightLayout.getChildren().clear();
+			searchList.clear();
+			try {				
 				if(travelType.getSelectedToggle() == roundTrip) { 
 					if(arrivalDate.getValue() == null) {
 						GridPane alert = new GridPane();
@@ -430,43 +434,34 @@ public abstract class Booking extends Application {
 	private void reserveTrigger() {
 		
 		reserveBtn.setOnAction(e -> {
-			
-			if(travelType.getSelectedToggle() == roundTrip) {
-				searchTrigger(toF, fromF, arrivalDate);
-			} else {
-				reserveDB.insertReserve();
-			}
-		});
-		
-		
-		/*
-		for(int i = 0; i < myBookings.size(); i++) {
-			if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
-				// cannot reserve, already booked
-			} else {
-				//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
-				
-				if(travelType.getSelectedToggle() == roundTrip) {
-					searchTrigger(toF, fromF, arrivalDate);
+			for(int i = 0; i < myBookings.size(); i++) {
+				if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+					GridPane alert = new GridPane();
+					Scene sc = new Scene(alert, 200, 200);
+					showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
+							"Flight already booked");
+				} else {
+					
+					if(travelType.getSelectedToggle() == roundTrip) {
+						searchTrigger(toF, fromF, arrivalDate);
+					} else {
+						reserveDB.insertReserve();
+					}
 				}
 			}
-		}
-		
-		if(travelType.getSelectedToggle() == roundTrip) {
-			searchTrigger(toF, fromF, arrivalDate);
-		}*/
+		});
 	}
 	
 	public abstract HBox userSettings();
 	
 	// Layout for right half of window 
-	private VBox searchFlights() {
-		VBox layout = new VBox();
-		
+	private StackPane searchFlights() {
+		StackPane layout = new StackPane();
+		VBox layer0 = new VBox();
 		double height = 0;
 		
 		for(int i = 0; i < searchList.size(); i++) {
-			layout.getChildren().addAll(searchList.get(i).flightLayout());
+			layer0.getChildren().addAll(searchList.get(i).flightLayout());
 		
 			height += searchList.get(i).flightLayout().getHeight();
 		}
@@ -482,13 +477,11 @@ public abstract class Booking extends Application {
 			s.setUnitIncrement(12);
 			s.setBlockIncrement(10);
 			
-			StackPane root = new StackPane();
-			root.getChildren().add(s);
-			
-			layout.getChildren().add(root);
+			layout.getChildren().addAll(layer0, s);
 		} else {
-			
+			layout.getChildren().add(layer0);
 		}
+		
 		System.out.println(height);
 		return layout;
 	}

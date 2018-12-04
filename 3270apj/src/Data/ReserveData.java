@@ -75,7 +75,7 @@ public class ReserveData {
         	*/
         	
         	//Add reservation to table
-        	String s = "INSERT INTO sys.reservation (idReservation, idCustomer, idFlight) VALUES (default,?,?)";
+        	String s = "INSERT INTO sys.Reservation (idReservation, idCustomer, idFlight) VALUES (default,?,?)";
 			ps = con.prepareStatement(s);
 			ps.setString(1, Booking.user.getIdCustomer() + "");
 			ps.setString(2, Booking.selectedFlight.getIdFlight() + "");
