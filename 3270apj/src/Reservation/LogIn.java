@@ -1,21 +1,30 @@
 package Reservation;
 
+import Application.Admin;
+import Application.Customer;
+import Data.AdminData;
+import Data.CustomerData;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.event.*;
-import javafx.geometry.*;
+import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.*;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import Data.CustomerData;
-import Application.Customer;
-import java.util.ArrayList;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class LogIn extends Application {
 	
@@ -202,7 +211,7 @@ public class LogIn extends Application {
 				if(userName.equals(c.getUserName())  ) {
 					System.out.println("Username: "+c.getUserName()+" Password: "+c.getPassword());
 					if(password.equals(c.getPassword())) {
-						Booking.user = c;
+						Booking.userC = c;
 						return true;
 					}
 					else {
@@ -216,8 +225,10 @@ public class LogIn extends Application {
 	
 	// Checks if username and password matches an Admin 
 	boolean checkCridentialsAdmin(String userName,String password) {
+		/*
 				if(userName.equalsIgnoreCase("Admin") ) {
 					if(password.equalsIgnoreCase("Admin")) {
+						Booking.userA = 
 						return true;
 					}
 					else {
@@ -225,6 +236,21 @@ public class LogIn extends Application {
 					}
 				}
 			return false;
+			*/
+		ObservableList<Admin> admins = AdminData.getAdmin();
+		for(Admin a:admins) {
+			if(userName.equals(a.getUserName())  ) {
+				System.out.println("Username: "+a.getUserName()+" Password: "+a.getPassword());
+				if(password.equals(a.getPassword())) {
+					Booking.userA = a;
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 	
  

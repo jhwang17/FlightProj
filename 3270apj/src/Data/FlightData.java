@@ -22,7 +22,7 @@ public class FlightData {
 		flights = FXCollections.observableArrayList();
 		con = Database.ConnectDB();
 		try {
-			String s = "SELECT idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, layover FROM sys.Flight";
+			String s = "SELECT idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, openSeats, layover FROM sys.Flight";
 			statement = con.createStatement();
 			rs = statement.executeQuery(s);
             if(rs != null) {
@@ -36,7 +36,8 @@ public class FlightData {
                 	flight.setDepartTime(rs.getString(6));
                 	flight.setArrivalTime(rs.getString(7));
                 	flight.setCapacity(rs.getInt(8));
-                	flight.setLayover(rs.getString(9));
+                	flight.setOpenSeats(rs.getInt(9));
+                	flight.setLayover(rs.getString(10));
                 	
                 	flights.add(flight);
                 }
@@ -47,32 +48,35 @@ public class FlightData {
 		return flights;
 	}
 	
-	public static void deleteReservedFlight(int idCustomer) {
+	public static void deleteReservedFlight(int id) {
 		try {
         	//Delete flight info in table
-        	String s = "DELETE FROM sys.Reservation WHERE idFlight=? and idCustomer="+ idCustomer;
+        	String s = "DELETE FROM sys.Reservation WHERE idFlight=? and id="+ id;
         	ps = con.prepareStatement(s);
-        	ps.setString(1, Booking.myFlightIdcancel.getText());
+        	ps.setString(1, Booking.myFlightIdCancel.getText());
         	
 			ps.executeUpdate();
         	
         	Booking.table.getColumns().clear();
 			Booking.table.getItems().clear();
-			Booking.myFlights();
+			//Booking.myFlights();
 			
-			Booking.myFlightIdcancel.clear();
+			Booking.myFlightIdCancel.clear();
+			
         } catch(Exception e) {
         	e.printStackTrace();
         }
 	}
 	
-	public static ObservableList<Flight> getReservedFlight(int idCustomer) {
+	public static ObservableList<Flight> getReservedFlight(int id) {
 		
 		//show customer data
 		flights = FXCollections.observableArrayList();
 		con = Database.ConnectDB();
 		try {
-			String s = "SELECT sys.Reservation.idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, layover FROM sys.Flight inner join sys.Reservation on sys.Reservation.idFlight = sys.flight.idFlight where idCustomer =" + idCustomer;
+			String s = "SELECT sys.Reservation.idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, "
+					+ "capacity, openSeats, layover FROM sys.Flight inner join sys.Reservation on sys.Reservation.idFlight = sys.flight.idFlight "
+					+ "where id=" + id;
 			statement = con.createStatement();
 			rs = statement.executeQuery(s);
             if(rs != null) {
@@ -86,7 +90,8 @@ public class FlightData {
                 	flight.setDepartTime(rs.getString(6));
                 	flight.setArrivalTime(rs.getString(7));
                 	flight.setCapacity(rs.getInt(8));
-                	flight.setLayover(rs.getString(9));
+                	flight.setOpenSeats(rs.getInt(9));
+                	flight.setLayover(rs.getString(10));
                 	
                 	flights.add(flight);
                 }
@@ -95,6 +100,27 @@ public class FlightData {
 			e.printStackTrace();
 		}
 		return flights;
+	}
+	
+	// Updates open seats when reserving
+	public static void updateSeats(int idFlight, int numOfPass) {
+		try {
+        	//Delete flight info in table
+        	String s = "UPDATE sys.Flight SET openSeats=(openSeats+?) WHERE idFlight="+ idFlight;
+        	ps = con.prepareStatement(s);
+        	ps.setString(1, numOfPass + "");
+        	
+			ps.executeUpdate();
+        	/*
+        	Booking.table.getColumns().clear();
+			Booking.table.getItems().clear();
+			Booking.myFlights();
+			
+			Booking.myFlightIdCancel.clear();
+			*/
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
 	}
 	
 	//method to add a flight
@@ -107,12 +133,13 @@ public class FlightData {
         		FlightView.departTimeA.getText().isEmpty() ||
         		FlightView.arrivalTimeA.getText().isEmpty() ||
         		FlightView.capacityA.getText().isEmpty() ||
+        		FlightView.openSeatsA.getText().isEmpty() ||
         		FlightView.layoverA.getText().isEmpty()) {
         		return; //stops the insert
         	}
         	
         	//Add flight to table
-        	String s = "INSERT INTO sys.Flight (idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, layover) VALUES (default,?,?,?,?,?,?,?,?)";
+        	String s = "INSERT INTO sys.Flight (idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, openSeats, layover) VALUES (default,?,?,?,?,?,?,?,?,?)";
 			ps = con.prepareStatement(s);
 			ps.setString(1, FlightView.departLocationA.getText());
 			ps.setString(2, FlightView.arrivalLocationA.getText());
@@ -121,7 +148,8 @@ public class FlightData {
 			ps.setString(5, FlightView.departTimeA.getText());
 			ps.setString(6, FlightView.arrivalTimeA.getText());
 			ps.setString(7, FlightView.capacityA.getText());
-			ps.setString(8, FlightView.layoverA.getText());
+			ps.setString(8, FlightView.openSeatsA.getText());
+			ps.setString(9, FlightView.layoverA.getText());
 			
 			ps.executeUpdate();
 			
@@ -134,6 +162,7 @@ public class FlightData {
 			FlightView.departTimeA.clear();
 			FlightView.arrivalTimeA.clear();
 			FlightView.capacityA.clear();
+			FlightView.openSeatsA.clear();
 			FlightView.layoverA.clear();
 			
         } catch(Exception e){
@@ -145,7 +174,7 @@ public class FlightData {
     public static void updateFlight() {
         try {
         	//Update flight info to table        			
-        	String s = "UPDATE sys.Flight SET departLocation=?, arrivalLocation=?, departDate=?, arrivalDate=?, departTime=?, arrivalTime=?, capacity=?, layover=? WHERE idFlight='" + FlightView.idFlightU.getText() + "'";
+        	String s = "UPDATE sys.Flight SET departLocation=?, arrivalLocation=?, departDate=?, arrivalDate=?, departTime=?, arrivalTime=?, capacity=?, openSeats=?, layover=? WHERE idFlight='" + FlightView.idFlightU.getText() + "'";
         	ps = con.prepareStatement(s);	
         	ps.setString(1, FlightView.departLocationU.getText());
 			ps.setString(2, FlightView.arrivalLocationU.getText());
@@ -154,7 +183,8 @@ public class FlightData {
 			ps.setString(5, FlightView.departTimeU.getText());
 			ps.setString(6, FlightView.arrivalTimeU.getText());
 			ps.setString(7, FlightView.capacityU.getText());
-			ps.setString(8, FlightView.layoverU.getText());
+			ps.setString(8, FlightView.openSeatsU.getText());
+			ps.setString(9, FlightView.layoverU.getText());
 			ps.executeUpdate();
 			
 			FlightView.table.getColumns().clear();
@@ -167,6 +197,7 @@ public class FlightData {
 			FlightView.departTimeU.clear();
 			FlightView.arrivalTimeU.clear();
 			FlightView.capacityU.clear();
+			FlightView.openSeatsU.clear();
 			FlightView.layoverU.clear();
 			
         } catch(Exception e) {

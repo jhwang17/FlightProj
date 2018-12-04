@@ -5,9 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+import Application.Admin;
 import Application.Customer;
 import Application.Flight;
-import Application.Reserve;
 import Data.FlightData;
 import Data.ReserveData;
 import javafx.application.Application;
@@ -41,8 +41,8 @@ import javafx.stage.Window;
 public abstract class Booking extends Application {
 	
 	// Window Dimensions
-	public static final double WIDTH = 750;
-	public static final double HEIGHT = 400;
+	protected static double width= 900;
+	protected static double height = 400;
 	
 	// Window Components
 	Stage bookingStage, warningStage;
@@ -59,19 +59,22 @@ public abstract class Booking extends Application {
 	TextField fromF, toF;
 	DatePicker departureDate, arrivalDate;
 	ComboBox dropList;
+	public static int numOfPass;
 	
 	// Flights Components
 	FlightData flightDB;
-	public static ObservableList<Reserve> myBookings;
+	ReserveData reserveDB;
+	public static ObservableList<Flight> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
 	public static Flight selectedFlight;
 	public static int selectedFlightID;
-	public static int userID;
-	public static Customer user;
+	public static String userType;
+	public static Customer userC;
+	public static Admin userA;
 	
 	public static TableView table;
-	public static TextField myFlightIdcancel;
+	public static TextField myFlightIdCancel;
 	public static Button cancelFlight;
 	
 	public static void main(String[] args) {
@@ -93,13 +96,15 @@ public abstract class Booking extends Application {
 		myFlightsBtn = new Button();
 		setSortBtn = new Button();
 		
+		numOfPass = 1;
+		
 		rightLayout();
 		leftLayout();
 
 		HBox root = new HBox();
 		root.getChildren().addAll(leftLayout, rightLayout);
 		
-		Scene scene = new Scene(root, WIDTH, HEIGHT);
+		Scene scene = new Scene(root, width, height);
 		stage.setScene(scene);
 		stage.setTitle("Book a flight!");
 		stage.setResizable(false);
@@ -110,13 +115,13 @@ public abstract class Booking extends Application {
 	public void rightLayout() {
 		rightLayout = new VBox();
 		
-		rightLayout.setPrefSize(WIDTH / 2, HEIGHT / 2);
+		rightLayout.setPrefSize(width/ 2, height / 2);
 	}
 	
 	// Controls left half of window
 	public void leftLayout() {
 		leftLayout = new BorderPane();
-		leftLayout.setPrefSize(WIDTH / 2, HEIGHT / 2);
+		leftLayout.setPrefSize(width/ 2, height / 2);
 		leftLayout.setStyle("-fx-border-width: 0px 2px 0px 0px; -fx-border-color: black");
 		
 		topLayout = new VBox();
@@ -232,6 +237,9 @@ public abstract class Booking extends Application {
 				);
 		dropList = new ComboBox(options);
 		dropList.setPromptText(options.get(0));
+		dropList.setOnAction(e -> {
+			numOfPass = Integer.parseInt((String) dropList.getValue());
+		});
 		passengerOptions.getChildren().addAll(passengerL, dropList);
 		
 		layout.getChildren().addAll(boardingOptions, locationOptions, passengerOptions);
@@ -245,7 +253,7 @@ public abstract class Booking extends Application {
 		layout.setSpacing(10);
 		
 		HBox row1 = new HBox();
-		row1.setPrefWidth(WIDTH / 2);
+		row1.setPrefWidth(width/ 2);
 		row1.setAlignment(Pos.CENTER);
 		row1.setSpacing(20);
 		
@@ -262,12 +270,12 @@ public abstract class Booking extends Application {
 		
 		HBox row2 = new HBox();
 		row2.setAlignment(Pos.CENTER);
-		row2.setPrefWidth(WIDTH / 2);
+		row2.setPrefWidth(width/ 2);
 		
 		reserveBtn = new Button();
 		reserveBtn.setText("Reserve");
 		reserveBtn.setFont(new Font("Arial", 20));
-		reserveBtn.setPrefWidth((WIDTH / 2) - 150);
+		reserveBtn.setPrefWidth((width/ 2) - 150);
 		
 		row2.getChildren().add(reserveBtn);
 		
@@ -341,16 +349,18 @@ public abstract class Booking extends Application {
 			departureDate.setValue(null);
 			arrivalDate.setValue(null);
 			dropList.setValue(null);
+			numOfPass = 1;
 			rightLayout.getChildren().clear();
 			searchList.clear();
 		});
 	}
 	
 	// Search button Trigger
-	private void searchTrigger(TextField from, TextField to, DatePicker takeOffDay) {
+	protected void searchTrigger(TextField from, TextField to, DatePicker takeOffDay) {
 		searchList = FXCollections.observableArrayList();
 		
 		searchBtn.setOnAction(e -> {
+			rightLayout.getChildren().clear();
 			try {
 				if(travelType.getSelectedToggle() == roundTrip) { 
 					if(arrivalDate.getValue() == null) {
@@ -385,7 +395,6 @@ public abstract class Booking extends Application {
 					
 					if(searchList.isEmpty()) {
 						GridPane alert = new GridPane();
-						Scene sc = new Scene(alert, 200, 200);
 						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
 								"No flights found");
 					} else {
@@ -434,112 +443,33 @@ public abstract class Booking extends Application {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
-	ReserveData reserveDB;
 	// Reserve button Trigger
-	private void reserveTrigger() {
-		
-		reserveBtn.setOnAction(e -> {
-			for(int i = 0; i < myBookings.size(); i++) {
-				if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
-					GridPane alert = new GridPane();
-					Scene sc = new Scene(alert, 200, 200);
-					showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
-							"Flight already booked");
-				} else {
-					
-					if(travelType.getSelectedToggle() == roundTrip) {
-						searchTrigger(toF, fromF, arrivalDate);
-					} else {
-						reserveDB.insertReserve();
-					}
-				}
-			}
-		});
-	}
+	protected abstract void reserveTrigger();
 	
 	public abstract HBox userSettings();
 	
 	//Layout for right half of window when myFlights is clicked
-	public static VBox myFlights()
-	{
-		VBox layout = new VBox();
-		
-		TableColumn idFlightC = new TableColumn("Flight ID");
-		idFlightC.setMinWidth(50);
-		idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
-		
-		TableColumn departLocationC = new TableColumn("Depart Location");
-		departLocationC.setMinWidth(100);
-		departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
-		
-		TableColumn arrivalLocationC = new TableColumn("Arrival Location");
-		arrivalLocationC.setMinWidth(100);
-		arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
-		
-		TableColumn departDateC = new TableColumn("Depart Date");
-		departDateC.setMinWidth(100);
-		departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
-		
-		TableColumn arrivalDateC = new TableColumn("Arrival Date");
-		arrivalDateC.setMinWidth(100);
-		arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
-		
-		TableColumn departTimeC = new TableColumn("Depart Time");
-		departTimeC.setMinWidth(100);
-		departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
-		
-		TableColumn arrivalTimeC = new TableColumn("Depart Time");
-		arrivalTimeC.setMinWidth(100);
-		arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
-		
-		TableColumn capacityC = new TableColumn("Capacity");
-		capacityC.setMinWidth(100);
-		capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
-		
-		TableColumn layoverC = new TableColumn("Layover");
-		layoverC.setMinWidth(100);
-		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
-		
-		table = new TableView();
-		ObservableList<Flight> data = FlightData.getReservedFlight(user.getIdCustomer());
-		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, layoverC);
-		table.getItems().addAll(data);
-		
-		myFlightIdcancel = new TextField();
-		myFlightIdcancel.setPromptText("Flight ID");
-		myFlightIdcancel.setMaxWidth(idFlightC.getPrefWidth());
-		
-		cancelFlight = new Button("Cancel");
-		cancelFlight.setOnAction(event -> {
-			FlightData.deleteReservedFlight(user.getIdCustomer());
-		});
-		
-		HBox deleteBox = new HBox();
-		deleteBox.setSpacing(10);
-		deleteBox.getChildren().addAll(myFlightIdcancel, cancelFlight);
-		layout.getChildren().addAll(table, deleteBox);
-		return layout;
-	}
+	public abstract VBox myFlights();
 	
 	
 	// Layout for right half of window when search is clicked
 	private VBox searchFlights() {
 		VBox layout = new VBox();
 		
-		double height = 0;
+		double barHeight = 0;
 		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());
 		
-			height += searchList.get(i).flightLayout().getHeight();
+			barHeight += searchList.get(i).flightLayout().getHeight();
 		}
 		
-		if(rightLayout.getHeight() < height) {
+		if(rightLayout.getHeight() < barHeight) {
 			ScrollBar s = new ScrollBar();
 			s.setMin(rightLayout.getHeight());
-			s.setMax(height);
+			s.setMax(barHeight);
 //			s.setMin(0);
-//			s.setMax(HEIGHT / 2);
+//			s.setMax(height / 2);
 			s.setOrientation(Orientation.VERTICAL);
 			s.setValue(110);
 			s.setUnitIncrement(12);
@@ -552,7 +482,6 @@ public abstract class Booking extends Application {
 		} else {
 			
 		}
-		System.out.println(height);
 		return layout;
 	}
 	
@@ -569,12 +498,16 @@ public abstract class Booking extends Application {
 
 // Layout for Customers
 class CustomerStage extends Booking {
+	
+	public CustomerStage() {
+		userType = "Customer";
+	}
 
 	@Override
 	public HBox userSettings() {
 		HBox row3 = new HBox();
 		row3.setAlignment(Pos.CENTER);
-		row3.setPrefWidth(WIDTH / 2);
+		row3.setPrefWidth(width/ 2);
 		row3.setSpacing(100);
 		
 		logoutBtn.setText("Logout");
@@ -590,15 +523,120 @@ class CustomerStage extends Booking {
 		
 		return row3;
 	}
+
+	@Override
+	public VBox myFlights() {
+		VBox layout = new VBox();
+		
+		TableColumn idFlightC = new TableColumn("Flight ID");
+		//idFlightC.setMinWidth(50);
+		idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
+		
+		TableColumn departLocationC = new TableColumn("Depart Location");
+		//departLocationC.setMinWidth(100);
+		departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
+		
+		TableColumn arrivalLocationC = new TableColumn("Arrival Location");
+		//arrivalLocationC.setMinWidth(100);
+		arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
+		
+		TableColumn departDateC = new TableColumn("Depart Date");
+		//departDateC.setMinWidth(100);
+		departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
+		
+		TableColumn arrivalDateC = new TableColumn("Arrival Date");
+		//arrivalDateC.setMinWidth(100);
+		arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
+		
+		TableColumn departTimeC = new TableColumn("Depart Time");
+		//departTimeC.setMinWidth(100);
+		departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn arrivalTimeC = new TableColumn("Depart Time");
+		//arrivalTimeC.setMinWidth(100);
+		arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn capacityC = new TableColumn("Capacity");
+		//capacityC.setMinWidth(100);
+		capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
+		
+		TableColumn openSeatsC = new TableColumn("Open Seats");
+		//capacityC.setMinWidth(100);
+		openSeatsC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("openSeats"));
+		
+		TableColumn layoverC = new TableColumn("Layover");
+		//layoverC.setMinWidth(100);
+		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
+		
+		table = new TableView();
+		ObservableList<Flight> data = FlightData.getReservedFlight(userC.getIdCustomer());
+		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
+		table.getItems().addAll(data);
+		
+		myFlightIdCancel = new TextField();
+		myFlightIdCancel.setPromptText("Enter Flight ID");
+		
+		
+		cancelFlight = new Button("Delete");
+		cancelFlight.setOnAction(event -> {
+			FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
+			FlightData.deleteReservedFlight(userC.getIdCustomer());
+		});
+		
+		HBox deleteOption = new HBox();
+		deleteOption.setPadding(new Insets(0, 0, 0, 5));
+		deleteOption.setSpacing(10);
+		deleteOption.getChildren().addAll(myFlightIdCancel, cancelFlight);
+		layout.getChildren().addAll(table, deleteOption);
+		return layout;
+	}
+
+	@Override
+	protected void reserveTrigger() {
+		reserveBtn.setOnAction(e -> {
+			myBookings = flightDB.getReservedFlight(userC.getIdCustomer());
+			if(myBookings.isEmpty()) {
+				if(travelType.getSelectedToggle() == roundTrip) {
+					searchTrigger(toF, fromF, arrivalDate);
+				} else {
+					for(int i = 0; i < numOfPass; i++) {
+						reserveDB.insertReserve();
+						flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+					}
+				}
+			} else {
+				for(int i = 0; i < myBookings.size(); i++) {
+					if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
+								"Flight already booked");
+					} else {
+						if(travelType.getSelectedToggle() == roundTrip) {
+							searchTrigger(toF, fromF, arrivalDate);
+						} else {
+							for(int j = 0; j < numOfPass; j++) {
+								reserveDB.insertReserve();
+								flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+							}
+						}
+					}
+				}
+			}
+			
+		});
+		
+	}
 	
 }
 
-// Layout for Admins
+// Layout for Admin
 class AdminStage extends Booking {
 	
 	Button admSettingsBtn, viewFlightBtn, viewUsersBtn, admBackBtn;
 	
 	AdminStage() {
+		userType = "Admin";
 		admSettingsBtn = new Button();
 		viewFlightBtn = new Button(); 
 		viewUsersBtn = new Button();
@@ -609,7 +647,7 @@ class AdminStage extends Booking {
 	public HBox userSettings() {
 		HBox row3 = new HBox();
 		row3.setAlignment(Pos.CENTER);
-		row3.setPrefWidth(WIDTH / 2);
+		row3.setPrefWidth(width/ 2);
 		row3.setSpacing(25);
 		
 		logoutBtn.setText("Logout");
@@ -687,4 +725,173 @@ class AdminStage extends Booking {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
+
+	@Override
+	public VBox myFlights() {
+		VBox layout = new VBox();
+		
+		TableColumn idFlightC = new TableColumn("Flight ID");
+		//idFlightC.setMinWidth(50);
+		idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
+		
+		TableColumn departLocationC = new TableColumn("Depart Location");
+		//departLocationC.setMinWidth(100);
+		departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
+		
+		TableColumn arrivalLocationC = new TableColumn("Arrival Location");
+		//arrivalLocationC.setMinWidth(100);
+		arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
+		
+		TableColumn departDateC = new TableColumn("Depart Date");
+		//departDateC.setMinWidth(100);
+		departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
+		
+		TableColumn arrivalDateC = new TableColumn("Arrival Date");
+		//arrivalDateC.setMinWidth(100);
+		arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
+		
+		TableColumn departTimeC = new TableColumn("Depart Time");
+		//departTimeC.setMinWidth(100);
+		departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn arrivalTimeC = new TableColumn("Depart Time");
+		//arrivalTimeC.setMinWidth(100);
+		arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn capacityC = new TableColumn("Capacity");
+		//capacityC.setMinWidth(100);
+		capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
+		
+		TableColumn openSeatsC = new TableColumn("Open Seats");
+		//capacityC.setMinWidth(100);
+		openSeatsC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("openSeats"));
+		
+		TableColumn layoverC = new TableColumn("Layover");
+		//layoverC.setMinWidth(100);
+		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
+		
+		table = new TableView();
+		ObservableList<Flight> data = FlightData.getReservedFlight(userA.getIdAdmin());
+		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
+		table.getItems().addAll(data);
+		
+		myFlightIdCancel = new TextField();
+		myFlightIdCancel.setPromptText("Enter Flight ID");
+		
+		
+		cancelFlight = new Button("Delete");
+		cancelFlight.setOnAction(event -> {
+			FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
+			FlightData.deleteReservedFlight(userA.getIdAdmin());
+		});
+		
+		HBox deleteOption = new HBox();
+		deleteOption.setPadding(new Insets(0, 0, 0, 5));
+		deleteOption.setSpacing(10);
+		deleteOption.getChildren().addAll(myFlightIdCancel, cancelFlight);
+		layout.getChildren().addAll(table, deleteOption);
+		return layout;
+	}
+
+	@Override
+	protected void reserveTrigger() {
+		reserveBtn.setOnAction(e -> {
+			myBookings = flightDB.getReservedFlight(userA.getIdAdmin());
+			if(myBookings.isEmpty()) {
+				if(travelType.getSelectedToggle() == roundTrip) {
+					searchTrigger(toF, fromF, arrivalDate);
+				} else {
+					for(int i = 0; i < numOfPass; i++) {
+						reserveDB.insertReserve();
+						flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+					}
+				}
+			} else {
+				for(int i = 0; i < myBookings.size(); i++) {
+					if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
+								"Flight already booked");
+					} else {
+						if(travelType.getSelectedToggle() == roundTrip) {
+							searchTrigger(toF, fromF, arrivalDate);
+						} else {
+							for(int j = 0; j < numOfPass; j++) {
+								reserveDB.insertReserve();
+								flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+							}
+						}
+					}
+				}
+			}
+			
+		});
+		
+	}
 }
+
+/*
+VBox layout = new VBox();
+
+TableColumn idFlightC = new TableColumn("Flight ID");
+//idFlightC.setMinWidth(50);
+idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
+
+TableColumn departLocationC = new TableColumn("Depart Location");
+//departLocationC.setMinWidth(100);
+departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
+
+TableColumn arrivalLocationC = new TableColumn("Arrival Location");
+//arrivalLocationC.setMinWidth(100);
+arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
+
+TableColumn departDateC = new TableColumn("Depart Date");
+//departDateC.setMinWidth(100);
+departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
+
+TableColumn arrivalDateC = new TableColumn("Arrival Date");
+//arrivalDateC.setMinWidth(100);
+arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
+
+TableColumn departTimeC = new TableColumn("Depart Time");
+//departTimeC.setMinWidth(100);
+departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+
+TableColumn arrivalTimeC = new TableColumn("Depart Time");
+//arrivalTimeC.setMinWidth(100);
+arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+
+TableColumn capacityC = new TableColumn("Capacity");
+//capacityC.setMinWidth(100);
+capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
+
+TableColumn openSeatsC = new TableColumn("Open Seats");
+//capacityC.setMinWidth(100);
+openSeatsC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("openSeats"));
+
+TableColumn layoverC = new TableColumn("Layover");
+//layoverC.setMinWidth(100);
+layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
+
+table = new TableView();
+ObservableList<Flight> data = FlightData.getReservedFlight(user.getIdCustomer());
+table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
+table.getItems().addAll(data);
+
+myFlightIdCancel = new TextField();
+myFlightIdCancel.setPromptText("Enter Flight ID");
+
+
+cancelFlight = new Button("Delete");
+cancelFlight.setOnAction(event -> {
+	FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
+	FlightData.deleteReservedFlight(user.getIdCustomer());
+});
+
+HBox deleteOption = new HBox();
+deleteOption.setPadding(new Insets(0, 0, 0, 5));
+deleteOption.setSpacing(10);
+deleteOption.getChildren().addAll(myFlightIdCancel, cancelFlight);
+layout.getChildren().addAll(table, deleteOption);
+return layout;*/

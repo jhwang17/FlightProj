@@ -31,7 +31,7 @@ public class ReserveData {
                 while (rs.next()) {
                 	Reserve reserve = new Reserve();
                 	reserve.setIdReservation(rs.getInt(1));
-                	reserve.setIdCustomer(rs.getInt(2));
+                	reserve.setID(rs.getInt(2));
                 	reserve.setIdFlight(rs.getInt(3));
                 	reserve.setIdSeat(rs.getInt(4));
                 	
@@ -75,9 +75,13 @@ public class ReserveData {
         	*/
         	
         	//Add reservation to table
-        	String s = "INSERT INTO sys.reservation (idReservation, idCustomer, idFlight) VALUES (default,?,?)";
+        	String s = "INSERT INTO sys.reservation (idReservation, id" + Booking.userType +", idFlight) VALUES (default,?,?)";
 			ps = con.prepareStatement(s);
-			ps.setString(1, Booking.user.getIdCustomer() + "");
+			if(Booking.userType == "Admin") {
+				ps.setString(1, Booking.userA.getIdAdmin() + "");
+			} else {
+				ps.setString(1, Booking.userC.getIdCustomer() + "");
+			}
 			ps.setString(2, Booking.selectedFlight.getIdFlight() + "");
 			//ps.setString(3, 1 + "");
 			

@@ -17,6 +17,7 @@ public class Flight {
 	SimpleStringProperty departTime;
 	SimpleStringProperty arrivalTime;
 	SimpleIntegerProperty capacity;
+	SimpleIntegerProperty openSeats;
 	SimpleStringProperty layover;
 	SimpleIntegerProperty idAirport;
 	SimpleIntegerProperty idAirplane;
@@ -37,8 +38,6 @@ public class Flight {
 		layout.setPrefSize(150, 200);
 		layout.setStyle("-fx-border-width: 0.5px, 0.5px, 0.5px, 0px; -fx-border-color: black");
 		
-		//Label idLabel = new Label();
-		//idLabel.setText(this.idFlight.toString());
 		Label departDLabel = new Label();
 		departDLabel.setText("Departure Date: " + this.getDepartDate());
 		Label arrivalDLabel = new Label();
@@ -47,8 +46,9 @@ public class Flight {
 		departTLabel.setText("Depart Time: " + this.getDepartTime());
 		Label arrivalTLabel = new Label();
 		arrivalTLabel.setText("Arrival Time: " + this.getArrivalTime());
-		Label capLabel = new Label();
-		capLabel.setText("Seats Available: " + capacity.getValue().toString());
+		Label avalLabel = new Label();
+		int availableSeats = capacity.getValue() - openSeats.getValue();
+		avalLabel.setText("Seats Available: " + availableSeats);
 		Label layoverLabel = new Label();
 		layoverLabel.setText("Layover: " + layover.getValue() + "hrs");
 		
@@ -59,17 +59,14 @@ public class Flight {
 			Booking.selectedFlightID = this.getIdFlight();
 			
 		});
-		//Possibly don't need to include flightID and capacity for viewers??
-		//Needs depart/arrival cities and number of seats available 
 		
-		
-		layout.getChildren().addAll(departDLabel, arrivalDLabel, departTLabel, arrivalTLabel, capLabel, layoverLabel, selector);
+		layout.getChildren().addAll(departDLabel, arrivalDLabel, departTLabel, arrivalTLabel, avalLabel, layoverLabel, selector);
 		return layout;
 	}
 	
 	public Flight(Integer idFlight, String departLocation, String arrivalLocation,
 				  String departDate, String arrivalDate, String departTime, 
-				  String arrivalTime, Integer capacity, String layover) {
+				  String arrivalTime, Integer capacity, Integer openSeats, String layover) {
 		
 		this.idFlight = new SimpleIntegerProperty(idFlight);
 		this.departLocation = new SimpleStringProperty(departLocation);
@@ -79,6 +76,7 @@ public class Flight {
 		this.departTime = new SimpleStringProperty(departTime);
 		this.arrivalTime = new SimpleStringProperty(arrivalTime);
 		this.capacity = new SimpleIntegerProperty(capacity);
+		this.openSeats = new SimpleIntegerProperty(openSeats);
 		this.layover = new SimpleStringProperty(layover);
 	}
 	
@@ -92,6 +90,14 @@ public class Flight {
 		this.idFlight = new SimpleIntegerProperty(idFlight);
 	}
 	
+	public int getOpenSeats() {
+		return openSeats.get();
+	}
+
+	public void setOpenSeats(int openSeats) {
+		this.openSeats = new SimpleIntegerProperty(openSeats);
+	}
+
 	public String getDepartLocation() {
 		return departLocation.get();
 	}
@@ -183,6 +189,7 @@ public class Flight {
                 ", departTime=" + departTime +
                 ", arrivalTime=" + arrivalTime +
                 ", capacity" + capacity +
+                ", openSeats" + openSeats +
                 ", layover" + layover +
                 '}';
 	}	

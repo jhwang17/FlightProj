@@ -1,62 +1,78 @@
 package Application;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 public class Admin {
-	int idAdmin;
-	String firstName;
-	String lastName;
-	String email;
+	
+	SimpleIntegerProperty idAdmin;
+	SimpleStringProperty firstName;
+	SimpleStringProperty lastName;
+	SimpleStringProperty userName;
+	SimpleStringProperty password;
 	
 	public Admin() {
 		
 	}
 	
-	public Admin(int idAdmin, String firstName, String lastName, String email) {
-		this.idAdmin = idAdmin;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
+	public Admin(Integer id, String fName, String lName, String userN, String passW) {
+		idAdmin = new SimpleIntegerProperty(id);
+		firstName = new SimpleStringProperty(fName);
+		lastName = new SimpleStringProperty(lName);
+		userName = new SimpleStringProperty(userN);
+		password = new SimpleStringProperty(passW);
 	}
 
 	// Getters and Setters for variables 
 	public int getIdAdmin() {
-		return idAdmin;
+		return idAdmin.get();
+		
 	}
-
-	public void setIdAdmin(int idAdmin) {
-		this.idAdmin = idAdmin;
+	
+	public void setIdAdmin(Integer id) {
+		idAdmin = new SimpleIntegerProperty(id); //can't use .set, need to cast it to new SimpleIntegeryProperty
 	}
-
+	
 	public String getFirstName() {
-		return firstName;
+		return firstName.get();
 	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	
+	public void setFirstName(String fName) {
+		firstName = new SimpleStringProperty(fName);
 	}
-
+	
 	public String getLastName() {
-		return lastName;
+		return lastName.get();
 	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	
+	public void setLastName(String lName) {
+		lastName = new SimpleStringProperty(lName);
 	}
-
-	public String getEmail() {
-		return email;
+	
+	public String getUserName() {
+		return userName.get();
 	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	
+	public void setUserName(String userN) {
+		userName = new SimpleStringProperty(userN);
+	}
+	
+	public String getPassword() {
+		return password.get();
+	}
+	
+	public void setPassword(String passW) {
+		password = new SimpleStringProperty(passW);
 	}
 	
 	@Override
     public String toString() {
         return "Admin{" +
-                "admin_id=" + idAdmin +
-                ", first_name='" + firstName + '\'' +
-                ", last_name='" + lastName + '\'' +
-                ", password='" + email + '\'' +
+                "idAdmin=" + idAdmin +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", userName" + userName + 
+                ", password" + password +  
                 '}';
     }
 }
