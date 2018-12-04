@@ -45,7 +45,7 @@ public abstract class Booking extends Application {
 	BorderPane leftLayout;
 	VBox botLayout, topLayout, rightLayout;
 	
-	Button backBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
+	Button logoutBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
 	static ToggleGroup travelType;
 	RadioButton oneWay, roundTrip;
 	Button setSortBtn;
@@ -76,7 +76,7 @@ public abstract class Booking extends Application {
 		flightDB = new FlightData();
 		flightList = flightDB.getFlight();
 		
-		backBtn = new Button();
+		logoutBtn = new Button();
 		clearBtn = new Button();
 		searchBtn = new Button();
 		sortBtn = new Button();
@@ -316,7 +316,7 @@ public abstract class Booking extends Application {
 	
 	// Back button Trigger
 	protected void backTrigger() {
-		backBtn.setOnAction(e -> {
+		logoutBtn.setOnAction(e -> {
 			LogIn nextStage = new LogIn();
 			Warning warningStage = new Warning(bookingStage, nextStage);
 			warningStage.show();
@@ -495,13 +495,13 @@ class CustomerStage extends Booking {
 		row3.setPrefWidth(WIDTH / 2);
 		row3.setSpacing(100);
 		
-		backBtn.setText("Back");
-		backBtn.setFont(new Font("Arial", 20));
+		logoutBtn.setText("Logout");
+		logoutBtn.setFont(new Font("Arial", 20));
 		
 		myFlightsBtn.setText("My Flights");
 		myFlightsBtn.setFont(new Font("Arial", 20));
 		
-		row3.getChildren().addAll(backBtn, myFlightsBtn);
+		row3.getChildren().addAll(logoutBtn, myFlightsBtn);
 		
 		super.backTrigger();
 		super.myFlightsTrigger();
@@ -530,8 +530,8 @@ class AdminStage extends Booking {
 		row3.setPrefWidth(WIDTH / 2);
 		row3.setSpacing(25);
 		
-		backBtn.setText("Back");
-		backBtn.setFont(new Font("Arial", 18));
+		logoutBtn.setText("Logout");
+		logoutBtn.setFont(new Font("Arial", 18));
 		
 		
 		admSettingsBtn = new Button();
@@ -541,7 +541,7 @@ class AdminStage extends Booking {
 		myFlightsBtn.setText("My Flights");
 		myFlightsBtn.setFont(new Font("Arial", 18));
 		
-		row3.getChildren().addAll(backBtn, admSettingsBtn, myFlightsBtn);
+		row3.getChildren().addAll(logoutBtn, admSettingsBtn, myFlightsBtn);
 		
 		super.backTrigger();
 		admSettingsTrigger();
