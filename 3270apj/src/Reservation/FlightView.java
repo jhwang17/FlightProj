@@ -2,6 +2,7 @@ package Reservation;
 
 import java.time.LocalDate;
 
+import Application.Customer;
 import Application.Flight;
 import Data.FlightData;
 import javafx.application.Application;
