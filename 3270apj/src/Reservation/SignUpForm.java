@@ -235,10 +235,10 @@ public class SignUpForm extends Application {
 	}
 
 	// Checks and prevents duplicate username creation
-	public boolean checkIfExist(String userName, String password) {
+	public boolean checkIfExist(String userName, String ssn) {
 		con = Database.ConnectDB();
 		try {
-			String s = "SELECT userName FROM sys.Customer WHERE userName= '" + userName + "' OR ssn='" + password + "'";
+			String s = "SELECT userName FROM sys.Customer WHERE userName= '" + userName + "' OR ssn='" + ssn + "'";
 			statement = con.createStatement();
 			rs = statement.executeQuery(s);
 			if (rs.next()) {

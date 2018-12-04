@@ -48,7 +48,7 @@ public class FlightData {
 		return flights;
 	}
 	
-	public static void deleteReservedFlight(int id) {
+	public static void deleteReservedFlight(String type, int id) {
 		try {
         	//Delete flight info in table
         	String s = "DELETE FROM sys.Reservation WHERE idFlight=? and id="+ id;
@@ -68,7 +68,7 @@ public class FlightData {
         }
 	}
 	
-	public static ObservableList<Flight> getReservedFlight(int id) {
+	public static ObservableList<Flight> getReservedFlight(String type, int id) {
 		
 		//show customer data
 		flights = FXCollections.observableArrayList();
