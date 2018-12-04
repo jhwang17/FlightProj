@@ -58,11 +58,11 @@ public abstract class Booking extends Application {
 	
 	// Flights Components
 	FlightData flightDB;
-	ObservableList<Reserve> currentBookings;
+	ObservableList<Reserve> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
-	Flight selectedFlight;
-	
+	public static Flight selectedFlight;
+	public static int selectedFlightID;
 	public static int userID;
 	
 	
@@ -422,16 +422,37 @@ public abstract class Booking extends Application {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
-	
+	ReserveData reserveDB;
 	// Reserve button Trigger
 	private void reserveTrigger() {
-		ReserveData reserveDB = new ReserveData();
+		reserveDB = new ReserveData();
 		
-		//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+		reserveBtn.setOnAction(e -> {
+			
+			if(travelType.getSelectedToggle() == roundTrip) {
+				searchTrigger(toF, fromF, arrivalDate);
+			} else {
+				reserveDB.insertReserve(userID, selectedFlightID, 1);
+			}
+		});
+		
+		
+		/*
+		for(int i = 0; i < myBookings.size(); i++) {
+			if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+				// cannot reserve, already booked
+			} else {
+				//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+				
+				if(travelType.getSelectedToggle() == roundTrip) {
+					searchTrigger(toF, fromF, arrivalDate);
+				}
+			}
+		}
 		
 		if(travelType.getSelectedToggle() == roundTrip) {
 			searchTrigger(toF, fromF, arrivalDate);
-		}
+		}*/
 	}
 	
 	public abstract HBox userSettings();
@@ -446,9 +467,7 @@ public abstract class Booking extends Application {
 		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());
-			if(searchList.get(i).selector.isSelected()) {
-				selectedFlight = searchList.get(i);
-			}
+		
 			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
