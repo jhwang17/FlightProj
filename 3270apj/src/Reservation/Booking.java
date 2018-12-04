@@ -500,7 +500,7 @@ public abstract class Booking extends Application {
 class CustomerStage extends Booking {
 	
 	public CustomerStage() {
-		userType = "Customer";
+		super.userType = "Customer";
 	}
 
 	@Override
@@ -569,7 +569,7 @@ class CustomerStage extends Booking {
 		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
 		
 		table = new TableView();
-		ObservableList<Flight> data = FlightData.getReservedFlight(userC.getIdCustomer());
+		ObservableList<Flight> data = FlightData.getReservedFlight(super.userType, userC.getIdCustomer());
 		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
 		table.getItems().addAll(data);
 		
@@ -580,7 +580,7 @@ class CustomerStage extends Booking {
 		cancelFlight = new Button("Delete");
 		cancelFlight.setOnAction(event -> {
 			FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
-			FlightData.deleteReservedFlight(userC.getIdCustomer());
+			FlightData.deleteReservedFlight(super.userType, userC.getIdCustomer());
 		});
 		
 		HBox deleteOption = new HBox();
@@ -594,7 +594,7 @@ class CustomerStage extends Booking {
 	@Override
 	protected void reserveTrigger() {
 		reserveBtn.setOnAction(e -> {
-			myBookings = flightDB.getReservedFlight(userC.getIdCustomer());
+			myBookings = flightDB.getReservedFlight(super.userType, userC.getIdCustomer());
 			if(myBookings.isEmpty()) {
 				if(travelType.getSelectedToggle() == roundTrip) {
 					searchTrigger(toF, fromF, arrivalDate);
@@ -636,7 +636,7 @@ class AdminStage extends Booking {
 	Button admSettingsBtn, viewFlightBtn, viewUsersBtn, admBackBtn;
 	
 	AdminStage() {
-		userType = "Admin";
+		super.userType = "Admin";
 		admSettingsBtn = new Button();
 		viewFlightBtn = new Button(); 
 		viewUsersBtn = new Button();
@@ -771,7 +771,7 @@ class AdminStage extends Booking {
 		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
 		
 		table = new TableView();
-		ObservableList<Flight> data = FlightData.getReservedFlight(userA.getIdAdmin());
+		ObservableList<Flight> data = FlightData.getReservedFlight(super.userType, userA.getIdAdmin());
 		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
 		table.getItems().addAll(data);
 		
@@ -782,7 +782,7 @@ class AdminStage extends Booking {
 		cancelFlight = new Button("Delete");
 		cancelFlight.setOnAction(event -> {
 			FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
-			FlightData.deleteReservedFlight(userA.getIdAdmin());
+			FlightData.deleteReservedFlight(super.userType, userA.getIdAdmin());
 		});
 		
 		HBox deleteOption = new HBox();
@@ -796,7 +796,7 @@ class AdminStage extends Booking {
 	@Override
 	protected void reserveTrigger() {
 		reserveBtn.setOnAction(e -> {
-			myBookings = flightDB.getReservedFlight(userA.getIdAdmin());
+			myBookings = flightDB.getReservedFlight(super.userType, userA.getIdAdmin());
 			if(myBookings.isEmpty()) {
 				if(travelType.getSelectedToggle() == roundTrip) {
 					searchTrigger(toF, fromF, arrivalDate);
