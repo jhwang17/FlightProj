@@ -1,6 +1,7 @@
 package Data;
 
 import Application.Flight;
+import Reservation.Booking;
 import Reservation.FlightView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +23,56 @@ public class FlightData {
 		con = Database.ConnectDB();
 		try {
 			String s = "SELECT idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, layover FROM sys.Flight";
+			statement = con.createStatement();
+			rs = statement.executeQuery(s);
+            if(rs != null) {
+                while (rs.next()) {
+                	Flight flight = new Flight();
+                	flight.setIdFlight(rs.getInt(1));
+                	flight.setDepartLocation(rs.getString(2));
+                	flight.setArrivalLocation(rs.getString(3));
+                	flight.setDepartDate(rs.getString(4));
+                	flight.setArrivalDate(rs.getString(5));
+                	flight.setDepartTime(rs.getString(6));
+                	flight.setArrivalTime(rs.getString(7));
+                	flight.setCapacity(rs.getInt(8));
+                	flight.setLayover(rs.getString(9));
+                	
+                	flights.add(flight);
+                }
+            }
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return flights;
+	}
+	
+	public static void deleteReservedFlight(int idCustomer) {
+		try {
+        	//Delete flight info in table
+        	String s = "DELETE FROM sys.Reservation WHERE idFlight=? and idCustomer="+ idCustomer;
+        	ps = con.prepareStatement(s);
+        	ps.setString(1, Booking.myFlightIdcancel.getText());
+        	
+			ps.executeUpdate();
+        	
+        	Booking.table.getColumns().clear();
+			Booking.table.getItems().clear();
+			Booking.myFlights();
+			
+			Booking.myFlightIdcancel.clear();
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
+	}
+	
+	public static ObservableList<Flight> getReservedFlight(int idCustomer) {
+		
+		//show customer data
+		flights = FXCollections.observableArrayList();
+		con = Database.ConnectDB();
+		try {
+			String s = "SELECT sys.Reservation.idFlight, departLocation, arrivalLocation, departDate, arrivalDate, departTime, arrivalTime, capacity, layover FROM sys.Flight inner join sys.Reservation on sys.Reservation.idFlight = sys.flight.idFlight where idCustomer =" + idCustomer;
 			statement = con.createStatement();
 			rs = statement.executeQuery(s);
             if(rs != null) {
@@ -125,7 +176,7 @@ public class FlightData {
     
     //method to delete a flight
     public static void deleteFlight() {
-        try {
+    	try {
         	//Delete flight info in table
         	String s = "DELETE FROM sys.Flight WHERE idFlight=?";
         	ps = con.prepareStatement(s);
