@@ -36,6 +36,7 @@ public class FlightView extends Application {
 	public static TableColumn departTimeC;
 	public static TableColumn arrivalTimeC;
 	public static TableColumn capacityC;
+	public static TableColumn openSeatsC;
 	public static TableColumn layoverC;
 	
 	public static TextField departLocationA;
@@ -45,6 +46,7 @@ public class FlightView extends Application {
 	public static TextField departTimeA;
 	public static TextField arrivalTimeA;
 	public static TextField capacityA;
+	public static TextField openSeatsA;
 	public static TextField layoverA;
 	
 	public static TextField idFlightU;
@@ -55,6 +57,7 @@ public class FlightView extends Application {
 	public static TextField departTimeU;
 	public static TextField arrivalTimeU;
 	public static TextField capacityU;
+	public static TextField openSeatsU;
 	public static TextField layoverU;
 	
 	public static TextField idFlightD;
@@ -111,6 +114,10 @@ public class FlightView extends Application {
 		capacityC = new TableColumn("Capacity");
 		capacityC.setMinWidth(100);
 		capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
+		
+		openSeatsC = new TableColumn("Open Seats");
+		openSeatsC.setMinWidth(100);
+		openSeatsC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("openSeats"));
 
 		layoverC = new TableColumn("Layover");
 		layoverC.setMinWidth(100);
@@ -151,6 +158,10 @@ public class FlightView extends Application {
 		capacityA = new TextField();
 		capacityA.setPromptText("Capacity");
 		capacityA.setMaxWidth(capacityC.getPrefWidth());
+		
+		openSeatsA = new TextField();
+		openSeatsA.setPromptText("Open Seats");
+		openSeatsA.setMaxWidth(openSeatsC.getPrefWidth());
 
 		layoverA = new TextField();
 		layoverA.setPromptText("Layover");
@@ -193,6 +204,10 @@ public class FlightView extends Application {
 		capacityU.setPromptText("Capacity");
 		capacityU.setMaxWidth(capacityC.getPrefWidth());
 
+		openSeatsU = new TextField();
+		openSeatsU.setPromptText("Open Seats");
+		openSeatsU.setMaxWidth(openSeatsC.getPrefWidth());
+		
 		layoverU = new TextField();
 		layoverU.setPromptText("Layover");
 		layoverU.setMaxWidth(layoverC.getPrefWidth());
@@ -247,13 +262,13 @@ public class FlightView extends Application {
 		
 		// create add box
 		HBox addBox = new HBox();
-		addBox.getChildren().addAll(departLocationA, arrivalLocationA, departDateA, arrivalDateA, departTimeA, arrivalTimeA, capacityA, layoverA, addButton);
+		addBox.getChildren().addAll(departLocationA, arrivalLocationA, departDateA, arrivalDateA, departTimeA, arrivalTimeA, capacityA, openSeatsA, layoverA, addButton);
 		addBox.setSpacing(10);
 
 		//create update box
 		HBox updateBox = new HBox();
 		updateBox.setSpacing(10);
-		updateBox.getChildren().addAll(idFlightU, departLocationU, arrivalLocationU, departDateU, arrivalDateU, departTimeU, arrivalTimeU, capacityU, layoverU, updateButton);
+		updateBox.getChildren().addAll(idFlightU, departLocationU, arrivalLocationU, departDateU, arrivalDateU, departTimeU, arrivalTimeU, capacityU, openSeatsU, layoverU, updateButton);
 		
 		// create delete box
 		HBox deleteBox = new HBox();
@@ -279,7 +294,7 @@ public class FlightView extends Application {
 	// Load the table
 	public static void loadTable() {
 		ObservableList<Flight> data = FlightData.getFlight();
-		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, layoverC);
+		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
 		table.getItems().addAll(data);
 	}
 	

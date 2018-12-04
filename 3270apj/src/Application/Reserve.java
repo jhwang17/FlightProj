@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 public class Reserve {
 	SimpleIntegerProperty idReservation;
-	SimpleIntegerProperty idCustomer;
+	SimpleIntegerProperty id;
 	SimpleIntegerProperty idFlight;
 	SimpleIntegerProperty idSeat;
 	
@@ -12,9 +12,9 @@ public class Reserve {
 		
 	}
 	
-	public Reserve(Integer idReservation, Integer idCustomer, Integer idFlight, Integer idSeat) {
+	public Reserve(Integer idReservation, Integer id, Integer idFlight, Integer idSeat) {
 		this.idReservation = new SimpleIntegerProperty(idReservation);
-		this.idCustomer = new SimpleIntegerProperty(idCustomer);
+		this.id = new SimpleIntegerProperty(id);
 		this.idFlight = new SimpleIntegerProperty(idFlight);
 		this.idSeat = new SimpleIntegerProperty(idSeat);			
 	}
@@ -29,12 +29,12 @@ public class Reserve {
 		this.idReservation = new SimpleIntegerProperty(idReservation);
 	}
 	
-	public int getIdCustomer() {
-		return idCustomer.get();
+	public int getID() {
+		return id.get();
 	}
 	
-	public void setIdCustomer(Integer idCustomer) {
-		this.idReservation = new SimpleIntegerProperty(idCustomer);
+	public void setID(Integer id) {
+		this.idReservation = new SimpleIntegerProperty(id);
 	}
 	
 	public int getIdFlight() {
