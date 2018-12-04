@@ -218,10 +218,6 @@ public class FlightView extends Application {
 		idFlightD.setMaxWidth(idFlightC.getPrefWidth());
 
 		// Create add button
-//		Button addButton = new Button("Add");
-//		addButton.setOnAction((event) -> {
-//			FlightData.insertFlight();
-//		});
 		Button addButton = new Button("Add");
 		addButton.setOnAction((event) -> {
 			if(departDateA.getValue().isAfter(arrivalDateA.getValue())) {

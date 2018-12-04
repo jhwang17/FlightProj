@@ -192,6 +192,12 @@ public class SignUpForm extends Application {
 					            alert.setHeaderText(null);
 					            alert.setContentText("You have successfully registered!");
 					            alert.showAndWait();
+					            
+					            Stage loginStage = new Stage();
+								LogIn Login = new LogIn();
+								Login.start(loginStage);
+								loginStage.show();
+								stage.close();
 							}
 						}
 					} catch (Exception ex) {

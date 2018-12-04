@@ -2,23 +2,27 @@ package Reservation;
 
 import Application.Customer;
 import Data.CustomerData;
+import Data.FlightData;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class CustomerView extends Application{
 	public static TableColumn idCustomerC;
@@ -65,6 +69,8 @@ public class CustomerView extends Application{
 	public static TextField idCustomerD;
 	public static TextField ssnD;
 	
+	SignUpForm signUp;
+	
 	public static TableView<Customer> table = new TableView<Customer>();
 	
 	Stage customerViewStage;
@@ -76,6 +82,7 @@ public class CustomerView extends Application{
 	//Table UI
 	public void start(Stage stage) {
 		customerViewStage = stage;
+		signUp = new SignUpForm();
 		Scene scene = new Scene(new Group());
 		stage.setTitle("Customer Information");
 		stage.setFullScreen(true);
@@ -255,8 +262,18 @@ public class CustomerView extends Application{
 		
 		//Create add button
 		Button addButton = new Button("Add");
-		addButton.setOnAction((event) -> { CustomerData.insertCustomer();});
-		
+		addButton.setOnAction((event) -> {
+			if(!signUp.isValidEmail(emailA.getText()) || 
+					!signUp.checkIfExist(userNameA.getText(), ssnA.getText()) || 
+					!signUp.isValidSsn(ssnA.getText())) {
+				GridPane alert = new GridPane();
+				Scene sc = new Scene(alert, 200, 200);
+				showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Error!",
+						"Fields are not valid");
+			} else {
+				CustomerData.insertCustomer();
+			}
+		});
 		//create update button
 		Button updateButton = new Button("Update");
 		updateButton.setOnAction((event) -> { CustomerData.updateCustomer();});
@@ -317,4 +334,14 @@ public class CustomerView extends Application{
 		table.getColumns().addAll(idCustomerC, firstNameC, lastNameC, streetC, cityC, stateC, zipCodeC, emailC, ssnC, userNameC, passwordC, securityQuestionC, securityAnswerC);
 		table.getItems().addAll(data);
 	}	
+	
+	// Layout for alerts 
+		public void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {
+			Alert alert = new Alert(alertType);
+			alert.setTitle(title);
+			alert.setHeaderText(null);
+			alert.setContentText(message);
+			alert.initOwner(owner);
+			alert.show();
+		}
 }

@@ -98,13 +98,6 @@ public class LogIn extends Application {
 		
 		final Text actiontarget = new Text();
 		gridPane.add(actiontarget, 1, 6);
-		/*
-		logInButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				actiontarget.setFill(Color.FIREBRICK);
-		    }
-		});*/
 	
 		 EventHandler<MouseEvent> loginEvent = new EventHandler<MouseEvent>() {
 	         public void handle(MouseEvent e) {
@@ -117,18 +110,17 @@ public class LogIn extends Application {
 							adminStage.show();
 							loginStage.close();
 						} catch(Exception ex) {
-										
+							ex.printStackTrace();			
 						}
 					} else if(checkCridentialsUser(userNameF.getText(),passwordF.getText())) {
 						 try {
     				 		Stage customerStage = new Stage();
     				 		CustomerStage booking = new CustomerStage();
-    				 		//booking.userID = userID;
     				 		booking.start(customerStage);
     				 		customerStage.show();
     				 		loginStage.close();
         			 	}catch(Exception ex) {
-
+        			 		ex.printStackTrace();
         			 	}
 					 } else {
 						 showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Login Error!",
@@ -138,32 +130,9 @@ public class LogIn extends Application {
 
 			 }
 		 };
-	         /* Annie	
-        				try {
-                				if (userNameF.getText().isEmpty() || passwordF.getText().isEmpty()) {
-                	
-                					showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), 
-                							"Login Error!", "Incorrect Username or Password");
-                					
-                				} else if (checkCridentials(userNameF.getText(),passwordF.getText())) {				
-                					Stage loginStage = new Stage();
-                					Booking booking = new Booking();
-                					booking.start(loginStage);
-                					loginStage.show();
-             
-                				} else if (userNameF.getText().equalsIgnoreCase("admin") && passwordF.getText().equalsIgnoreCase("admin")) {
-                					Stage loginStage = new Stage();
-                					Booking booking = new Booking();
-                					booking.start(loginStage);
-                					loginStage.show();
-                				}
-                				}catch(Exception ex) {
-            						ex.printStackTrace();
-                			}	
-                		}
-                	}
-                };*/
+
     logInButton.addEventHandler(MouseEvent.MOUSE_CLICKED, loginEvent);
+    
 	EventHandler<MouseEvent> registerEvent = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
@@ -174,7 +143,7 @@ public class LogIn extends Application {
 					signUpForm.start(registerStage);
 					registerStage.show();
 				} catch(Exception ex) {
-				
+					ex.printStackTrace();
 				}
 			}
 		}
@@ -192,7 +161,7 @@ public class LogIn extends Application {
 					forget.start(forgetStage);
 					forgetStage.show();
 				} catch(Exception ex) {
-
+					ex.printStackTrace();
 				}
 			}
 		}
@@ -205,16 +174,15 @@ public class LogIn extends Application {
 		ObservableList<Customer> customers = CustomerData.getCustomer();
 
 		if(customers.isEmpty()) {
-			return false;		}
-		else {
+			return false;		
+		} else {
 			for(Customer c:customers) {
 				if(userName.equals(c.getUserName())  ) {
 					System.out.println("Username: "+c.getUserName()+" Password: "+c.getPassword());
 					if(password.equals(c.getPassword())) {
 						Booking.userC = c;
 						return true;
-					}
-					else {
+					} else {
 						return false;
 					}
 				}
@@ -225,18 +193,6 @@ public class LogIn extends Application {
 	
 	// Checks if username and password matches an Admin 
 	boolean checkCridentialsAdmin(String userName,String password) {
-		/*
-				if(userName.equalsIgnoreCase("Admin") ) {
-					if(password.equalsIgnoreCase("Admin")) {
-						Booking.userA = 
-						return true;
-					}
-					else {
-						return false;
-					}
-				}
-			return false;
-			*/
 		ObservableList<Admin> admins = AdminData.getAdmin();
 		for(Admin a:admins) {
 			if(userName.equals(a.getUserName())  ) {
@@ -252,18 +208,6 @@ public class LogIn extends Application {
 		}
 		return false;
 	}
-	
- 
-	
-	
-		/*Annie
-		for(Customer c:customers) {
-			if (c.getUserName().equals(userName) && c.getPassword().equals(password)) {
-					return true;					
-			}
-		}
-		return false;
-	}*/
 	
 	// Sets alert popup window
 	public void showAlert(Alert.AlertType alertType,Window owner,String title,String message) {
