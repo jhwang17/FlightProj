@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import Application.Flight;
 import Application.Reserve;
+import Reservation.Booking;
 import Reservation.FlightView;
 import Reservation.ReserveView;
 import javafx.collections.FXCollections;
@@ -45,7 +46,8 @@ public class ReserveData {
 	}
 			
 	//method to add a reservation
-    public void insertReserve(int cusID, int flightID, int seatID) {
+    public void insertReserve() {
+    	con = Database.ConnectDB();
         try {
         	/*
         	if (ReserveView.idCustomerA.getEditor().getText().isEmpty() ||
@@ -73,11 +75,11 @@ public class ReserveData {
         	*/
         	
         	//Add reservation to table
-        	String s = "INSERT INTO sys.Reservation (idReservation, idCustomer, idFlight, idSeat) VALUES (default,?,?,?)";
+        	String s = "INSERT INTO sys.reservation (idReservation, idCustomer, idFlight) VALUES (default,?,?)";
 			ps = con.prepareStatement(s);
-			ps.setString(1, String.valueOf(cusID));
-			ps.setString(2, String.valueOf(flightID));
-			ps.setString(3, String.valueOf(seatID));
+			ps.setString(1, Booking.user.getIdCustomer() + "");
+			ps.setString(2, Booking.selectedFlight.getIdFlight() + "");
+			//ps.setString(3, 1 + "");
 			
 			ps.executeUpdate();
 			

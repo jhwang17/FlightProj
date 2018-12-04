@@ -1,5 +1,6 @@
 package Application;
 
+import Reservation.Booking;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.Label;
@@ -52,7 +53,12 @@ public class Flight {
 		layoverLabel.setText("Layover: " + layover.getValue() + "hrs");
 		
 		selector = new RadioButton();
-		
+		selector.setOnAction(e -> {
+			Booking.selectedFlight = new Flight();
+			Booking.selectedFlight = this;
+			Booking.selectedFlightID = this.getIdFlight();
+			
+		});
 		//Possibly don't need to include flightID and capacity for viewers??
 		//Needs depart/arrival cities and number of seats available 
 		

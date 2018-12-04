@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+import Application.Customer;
 import Application.Flight;
 import Application.Reserve;
 import Data.FlightData;
@@ -58,12 +59,13 @@ public abstract class Booking extends Application {
 	
 	// Flights Components
 	FlightData flightDB;
-	ObservableList<Reserve> myBookings;
+	public static ObservableList<Reserve> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
 	public static Flight selectedFlight;
 	public static int selectedFlightID;
 	public static int userID;
+	public static Customer user;
 	
 	
 	public static void main(String[] args) {
@@ -74,6 +76,7 @@ public abstract class Booking extends Application {
 	public void start(Stage stage) throws Exception {
 		bookingStage = stage;
 		flightDB = new FlightData();
+		reserveDB = new ReserveData();
 		flightList = flightDB.getFlight();
 		
 		logoutBtn = new Button();
@@ -425,14 +428,13 @@ public abstract class Booking extends Application {
 	ReserveData reserveDB;
 	// Reserve button Trigger
 	private void reserveTrigger() {
-		reserveDB = new ReserveData();
 		
 		reserveBtn.setOnAction(e -> {
 			
 			if(travelType.getSelectedToggle() == roundTrip) {
 				searchTrigger(toF, fromF, arrivalDate);
 			} else {
-				reserveDB.insertReserve(userID, selectedFlightID, 1);
+				reserveDB.insertReserve();
 			}
 		});
 		
@@ -462,8 +464,6 @@ public abstract class Booking extends Application {
 		VBox layout = new VBox();
 		
 		double height = 0;
-		
-		selectedFlight = new Flight();
 		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());

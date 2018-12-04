@@ -114,7 +114,7 @@ public class LogIn extends Application {
 						 try {
     				 		Stage customerStage = new Stage();
     				 		CustomerStage booking = new CustomerStage();
-    				 		booking.userID = userID;
+    				 		//booking.userID = userID;
     				 		booking.start(customerStage);
     				 		customerStage.show();
     				 		loginStage.close();
@@ -202,7 +202,7 @@ public class LogIn extends Application {
 				if(userName.equals(c.getUserName())  ) {
 					System.out.println("Username: "+c.getUserName()+" Password: "+c.getPassword());
 					if(password.equals(c.getPassword())) {
-						userID = c.getIdCustomer();
+						Booking.user = c;
 						return true;
 					}
 					else {
