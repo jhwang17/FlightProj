@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+import Application.Customer;
 import Application.Flight;
 import Application.Reserve;
 import Data.FlightData;
@@ -45,7 +46,7 @@ public abstract class Booking extends Application {
 	BorderPane leftLayout;
 	VBox botLayout, topLayout, rightLayout;
 	
-	Button backBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
+	Button logoutBtn, clearBtn, searchBtn, sortBtn, reserveBtn, myFlightsBtn;
 	static ToggleGroup travelType;
 	RadioButton oneWay, roundTrip;
 	Button setSortBtn;
@@ -58,12 +59,13 @@ public abstract class Booking extends Application {
 	
 	// Flights Components
 	FlightData flightDB;
-	ObservableList<Reserve> currentBookings;
+	public static ObservableList<Reserve> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
-	Flight selectedFlight;
-	
+	public static Flight selectedFlight;
+	public static int selectedFlightID;
 	public static int userID;
+	public static Customer user;
 	
 	
 	public static void main(String[] args) {
@@ -74,9 +76,10 @@ public abstract class Booking extends Application {
 	public void start(Stage stage) throws Exception {
 		bookingStage = stage;
 		flightDB = new FlightData();
+		reserveDB = new ReserveData();
 		flightList = flightDB.getFlight();
 		
-		backBtn = new Button();
+		logoutBtn = new Button();
 		clearBtn = new Button();
 		searchBtn = new Button();
 		sortBtn = new Button();
@@ -316,7 +319,7 @@ public abstract class Booking extends Application {
 	
 	// Back button Trigger
 	protected void backTrigger() {
-		backBtn.setOnAction(e -> {
+		logoutBtn.setOnAction(e -> {
 			LogIn nextStage = new LogIn();
 			Warning warningStage = new Warning(bookingStage, nextStage);
 			warningStage.show();
@@ -422,16 +425,36 @@ public abstract class Booking extends Application {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
-	
+	ReserveData reserveDB;
 	// Reserve button Trigger
 	private void reserveTrigger() {
-		ReserveData reserveDB = new ReserveData();
 		
-		//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+		reserveBtn.setOnAction(e -> {
+			
+			if(travelType.getSelectedToggle() == roundTrip) {
+				searchTrigger(toF, fromF, arrivalDate);
+			} else {
+				reserveDB.insertReserve();
+			}
+		});
+		
+		
+		/*
+		for(int i = 0; i < myBookings.size(); i++) {
+			if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+				// cannot reserve, already booked
+			} else {
+				//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
+				
+				if(travelType.getSelectedToggle() == roundTrip) {
+					searchTrigger(toF, fromF, arrivalDate);
+				}
+			}
+		}
 		
 		if(travelType.getSelectedToggle() == roundTrip) {
 			searchTrigger(toF, fromF, arrivalDate);
-		}
+		}*/
 	}
 	
 	public abstract HBox userSettings();
@@ -442,13 +465,9 @@ public abstract class Booking extends Application {
 		
 		double height = 0;
 		
-		selectedFlight = new Flight();
-		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());
-			if(searchList.get(i).selector.isSelected()) {
-				selectedFlight = searchList.get(i);
-			}
+		
 			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
@@ -495,13 +514,13 @@ class CustomerStage extends Booking {
 		row3.setPrefWidth(WIDTH / 2);
 		row3.setSpacing(100);
 		
-		backBtn.setText("Back");
-		backBtn.setFont(new Font("Arial", 20));
+		logoutBtn.setText("Logout");
+		logoutBtn.setFont(new Font("Arial", 20));
 		
 		myFlightsBtn.setText("My Flights");
 		myFlightsBtn.setFont(new Font("Arial", 20));
 		
-		row3.getChildren().addAll(backBtn, myFlightsBtn);
+		row3.getChildren().addAll(logoutBtn, myFlightsBtn);
 		
 		super.backTrigger();
 		super.myFlightsTrigger();
@@ -530,8 +549,8 @@ class AdminStage extends Booking {
 		row3.setPrefWidth(WIDTH / 2);
 		row3.setSpacing(25);
 		
-		backBtn.setText("Back");
-		backBtn.setFont(new Font("Arial", 18));
+		logoutBtn.setText("Logout");
+		logoutBtn.setFont(new Font("Arial", 18));
 		
 		
 		admSettingsBtn = new Button();
@@ -541,7 +560,7 @@ class AdminStage extends Booking {
 		myFlightsBtn.setText("My Flights");
 		myFlightsBtn.setFont(new Font("Arial", 18));
 		
-		row3.getChildren().addAll(backBtn, admSettingsBtn, myFlightsBtn);
+		row3.getChildren().addAll(logoutBtn, admSettingsBtn, myFlightsBtn);
 		
 		super.backTrigger();
 		admSettingsTrigger();
