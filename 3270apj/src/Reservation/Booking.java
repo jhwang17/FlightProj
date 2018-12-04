@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+import Application.Customer;
 import Application.Flight;
 import Application.Reserve;
 import Data.FlightData;
@@ -23,8 +24,11 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -58,13 +62,17 @@ public abstract class Booking extends Application {
 	
 	// Flights Components
 	FlightData flightDB;
-	ObservableList<Reserve> currentBookings;
+	public static ObservableList<Reserve> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
-	Flight selectedFlight;
-	
+	public static Flight selectedFlight;
+	public static int selectedFlightID;
 	public static int userID;
+	public static Customer user;
 	
+	public static TableView table;
+	public static TextField myFlightIdcancel;
+	public static Button cancelFlight;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -74,6 +82,7 @@ public abstract class Booking extends Application {
 	public void start(Stage stage) throws Exception {
 		bookingStage = stage;
 		flightDB = new FlightData();
+		reserveDB = new ReserveData();
 		flightList = flightDB.getFlight();
 		
 		logoutBtn = new Button();
@@ -399,7 +408,10 @@ public abstract class Booking extends Application {
 	
 	// currentBookings Trigger
 	protected void myFlightsTrigger() {
-		
+		myFlightsBtn.setOnAction((e) -> {
+			rightLayout.getChildren().clear();
+			rightLayout.getChildren().add(myFlights());
+		});
 	}
 	
 	// Configures sort settings, reactivates search trigger
@@ -422,33 +434,103 @@ public abstract class Booking extends Application {
 			leftLayout.setBottom(bottomLeftDefault());
 		});
 	}
-	
+	ReserveData reserveDB;
 	// Reserve button Trigger
 	private void reserveTrigger() {
-		ReserveData reserveDB = new ReserveData();
 		
-		//reserveDB.insertReserve(userID, selectedFlight.getIdFlight(), Integer.parseInt(passengerNum));
-		
-		if(travelType.getSelectedToggle() == roundTrip) {
-			searchTrigger(toF, fromF, arrivalDate);
-		}
+		reserveBtn.setOnAction(e -> {
+			for(int i = 0; i < myBookings.size(); i++) {
+				if(myBookings.get(i).getIdFlight() == selectedFlight.getIdFlight()) {
+					GridPane alert = new GridPane();
+					Scene sc = new Scene(alert, 200, 200);
+					showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Alert",
+							"Flight already booked");
+				} else {
+					
+					if(travelType.getSelectedToggle() == roundTrip) {
+						searchTrigger(toF, fromF, arrivalDate);
+					} else {
+						reserveDB.insertReserve();
+					}
+				}
+			}
+		});
 	}
 	
 	public abstract HBox userSettings();
 	
-	// Layout for right half of window 
+	//Layout for right half of window when myFlights is clicked
+	public static VBox myFlights()
+	{
+		VBox layout = new VBox();
+		
+		TableColumn idFlightC = new TableColumn("Flight ID");
+		idFlightC.setMinWidth(50);
+		idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
+		
+		TableColumn departLocationC = new TableColumn("Depart Location");
+		departLocationC.setMinWidth(100);
+		departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
+		
+		TableColumn arrivalLocationC = new TableColumn("Arrival Location");
+		arrivalLocationC.setMinWidth(100);
+		arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
+		
+		TableColumn departDateC = new TableColumn("Depart Date");
+		departDateC.setMinWidth(100);
+		departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
+		
+		TableColumn arrivalDateC = new TableColumn("Arrival Date");
+		arrivalDateC.setMinWidth(100);
+		arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
+		
+		TableColumn departTimeC = new TableColumn("Depart Time");
+		departTimeC.setMinWidth(100);
+		departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn arrivalTimeC = new TableColumn("Depart Time");
+		arrivalTimeC.setMinWidth(100);
+		arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
+		
+		TableColumn capacityC = new TableColumn("Capacity");
+		capacityC.setMinWidth(100);
+		capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
+		
+		TableColumn layoverC = new TableColumn("Layover");
+		layoverC.setMinWidth(100);
+		layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
+		
+		table = new TableView();
+		ObservableList<Flight> data = FlightData.getReservedFlight(user.getIdCustomer());
+		table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, layoverC);
+		table.getItems().addAll(data);
+		
+		myFlightIdcancel = new TextField();
+		myFlightIdcancel.setPromptText("Flight ID");
+		myFlightIdcancel.setMaxWidth(idFlightC.getPrefWidth());
+		
+		cancelFlight = new Button("Cancel");
+		cancelFlight.setOnAction(event -> {
+			FlightData.deleteReservedFlight(user.getIdCustomer());
+		});
+		
+		HBox deleteBox = new HBox();
+		deleteBox.setSpacing(10);
+		deleteBox.getChildren().addAll(myFlightIdcancel, cancelFlight);
+		layout.getChildren().addAll(table, deleteBox);
+		return layout;
+	}
+	
+	
+	// Layout for right half of window when search is clicked
 	private VBox searchFlights() {
 		VBox layout = new VBox();
 		
 		double height = 0;
 		
-		selectedFlight = new Flight();
-		
 		for(int i = 0; i < searchList.size(); i++) {
 			layout.getChildren().addAll(searchList.get(i).flightLayout());
-			if(searchList.get(i).selector.isSelected()) {
-				selectedFlight = searchList.get(i);
-			}
+		
 			height += searchList.get(i).flightLayout().getHeight();
 		}
 		
