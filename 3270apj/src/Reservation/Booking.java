@@ -1,5 +1,6 @@
 package Reservation;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -67,9 +68,11 @@ public abstract class Booking extends Application {
 	public static ObservableList<Flight> myBookings;
 	ObservableList<Flight> flightList;
 	private static ObservableList<Flight> searchList;
+	public static ToggleGroup flightGroup;
 	public static Flight selectedFlight;
 	public static int selectedFlightID;
 	public static String userType;
+	public static int currentID;
 	public static Customer userC;
 	public static Admin userA;
 	
@@ -494,6 +497,25 @@ public abstract class Booking extends Application {
 		alert.initOwner(owner);
 		alert.show();
 	}
+	
+	// Not functional
+	/*
+	public boolean checkConflictingDate() {
+		myBookings = flightDB.getReservedFlight(userType, currentID);
+		
+		for(int i = 0; i < myBookings.size(); i++) {
+			
+			if(myBookings.get(i).getDepartDate().startsWith(selectedFlight.getDepartDate())) {
+				if(myBookings.get(i).getDepartTime().startsWith(selectedFlight.getDepartTime()) ||
+						Integer.parseInt(myBookings.get(i).getDepartTime()) < Integer.parseInt(selectedFlight.getArrivalTime())) {
+					return false;
+				}
+				
+			}
+		}
+		return true;
+	}
+	*/
 }
 
 // Layout for Customers
@@ -501,6 +523,7 @@ class CustomerStage extends Booking {
 	
 	public CustomerStage() {
 		super.userType = "Customer";
+		super.currentID = userC.getIdCustomer();
 	}
 
 	@Override
@@ -602,6 +625,10 @@ class CustomerStage extends Booking {
 					for(int i = 0; i < numOfPass; i++) {
 						reserveDB.insertReserve();
 						flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Your flight is booked!",
+								"You have booked the flight successfully. Thank you for your business");
 					}
 				}
 			} else {
@@ -618,6 +645,10 @@ class CustomerStage extends Booking {
 							for(int j = 0; j < numOfPass; j++) {
 								reserveDB.insertReserve();
 								flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+								GridPane alert = new GridPane();
+								Scene sc = new Scene(alert, 200, 200);
+								showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Your flight is booked!",
+										"You have booked the flight successfully. Thank you for your business");
 							}
 						}
 					}
@@ -641,6 +672,8 @@ class AdminStage extends Booking {
 		viewFlightBtn = new Button(); 
 		viewUsersBtn = new Button();
 		admBackBtn = new Button();
+		
+		super.currentID = userA.getIdAdmin();
 	}
 
 	@Override
@@ -804,6 +837,10 @@ class AdminStage extends Booking {
 					for(int i = 0; i < numOfPass; i++) {
 						reserveDB.insertReserve();
 						flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+						GridPane alert = new GridPane();
+						Scene sc = new Scene(alert, 200, 200);
+						showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Your flight is booked!",
+								"You have booked the flight successfully. Thank you for your business");
 					}
 				}
 			} else {
@@ -820,6 +857,10 @@ class AdminStage extends Booking {
 							for(int j = 0; j < numOfPass; j++) {
 								reserveDB.insertReserve();
 								flightDB.updateSeats(selectedFlight.getIdFlight(), 1);
+								GridPane alert = new GridPane();
+								Scene sc = new Scene(alert, 200, 200);
+								showAlert(Alert.AlertType.ERROR, alert.getScene().getWindow(), "Your flight is booked!",
+										"You have booked the flight successfully. Thank you for your business");
 							}
 						}
 					}
@@ -830,68 +871,3 @@ class AdminStage extends Booking {
 		
 	}
 }
-
-/*
-VBox layout = new VBox();
-
-TableColumn idFlightC = new TableColumn("Flight ID");
-//idFlightC.setMinWidth(50);
-idFlightC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("idFlight"));
-
-TableColumn departLocationC = new TableColumn("Depart Location");
-//departLocationC.setMinWidth(100);
-departLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departLocation"));
-
-TableColumn arrivalLocationC = new TableColumn("Arrival Location");
-//arrivalLocationC.setMinWidth(100);
-arrivalLocationC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalLocation"));
-
-TableColumn departDateC = new TableColumn("Depart Date");
-//departDateC.setMinWidth(100);
-departDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departDate"));
-
-TableColumn arrivalDateC = new TableColumn("Arrival Date");
-//arrivalDateC.setMinWidth(100);
-arrivalDateC.setCellValueFactory(new PropertyValueFactory<Flight, String>("arrivalDate"));
-
-TableColumn departTimeC = new TableColumn("Depart Time");
-//departTimeC.setMinWidth(100);
-departTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
-
-TableColumn arrivalTimeC = new TableColumn("Depart Time");
-//arrivalTimeC.setMinWidth(100);
-arrivalTimeC.setCellValueFactory(new PropertyValueFactory<Flight, String>("departTime"));
-
-TableColumn capacityC = new TableColumn("Capacity");
-//capacityC.setMinWidth(100);
-capacityC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("capacity"));
-
-TableColumn openSeatsC = new TableColumn("Open Seats");
-//capacityC.setMinWidth(100);
-openSeatsC.setCellValueFactory(new PropertyValueFactory<Flight, Integer>("openSeats"));
-
-TableColumn layoverC = new TableColumn("Layover");
-//layoverC.setMinWidth(100);
-layoverC.setCellValueFactory(new PropertyValueFactory<Flight, String>("layover"));
-
-table = new TableView();
-ObservableList<Flight> data = FlightData.getReservedFlight(user.getIdCustomer());
-table.getColumns().addAll(idFlightC, departLocationC, arrivalLocationC, departDateC, arrivalDateC, departTimeC, arrivalTimeC, capacityC, openSeatsC, layoverC);
-table.getItems().addAll(data);
-
-myFlightIdCancel = new TextField();
-myFlightIdCancel.setPromptText("Enter Flight ID");
-
-
-cancelFlight = new Button("Delete");
-cancelFlight.setOnAction(event -> {
-	FlightData.updateSeats(Integer.parseInt(myFlightIdCancel.getText()), -1);
-	FlightData.deleteReservedFlight(user.getIdCustomer());
-});
-
-HBox deleteOption = new HBox();
-deleteOption.setPadding(new Insets(0, 0, 0, 5));
-deleteOption.setSpacing(10);
-deleteOption.getChildren().addAll(myFlightIdCancel, cancelFlight);
-layout.getChildren().addAll(table, deleteOption);
-return layout;*/
